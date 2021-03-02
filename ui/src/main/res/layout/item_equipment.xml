@@ -6,7 +6,7 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="8dp">
 
-    <TextView
+    <CheckBox
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
