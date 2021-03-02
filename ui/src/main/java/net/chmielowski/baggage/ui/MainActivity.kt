@@ -1,4 +1,4 @@
-package net.chmielowski.baggage
+package net.chmielowski.baggage.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
