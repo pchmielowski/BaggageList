@@ -12,6 +12,6 @@ class MainFragment : Fragment(R.layout.screen_items) {
         val adapter = EquipmentAdapter()
         binding.list.adapter = adapter
 
-        adapter.submitList((1..10).map { EquipmentItem(EquipmentId(it), "Item $it") })
+        adapter.submitList((1..30).map { EquipmentItem(EquipmentId(it), "Item $it") })
     }
 }
