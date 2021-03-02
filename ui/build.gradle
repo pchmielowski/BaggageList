@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion sdk_version.max
+    buildToolsVersion build_tools_version
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 30
+        minSdkVersion sdk_version.min
+        targetSdkVersion sdk_version.max
         versionCode 1
         versionName "1.0"
         consumerProguardFiles "consumer-rules.pro"
