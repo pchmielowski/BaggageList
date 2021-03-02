@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/main"
-        android:name="net.chmielowski.baggage.ui.MainFragment"
+        android:name="net.chmielowski.baggage.ui.EquipmentListFragment"
         android:label="Main" />
 
 </navigation>
