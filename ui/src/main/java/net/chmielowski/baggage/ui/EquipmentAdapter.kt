@@ -15,7 +15,8 @@ class EquipmentAdapter : ListAdapter<EquipmentItem, EquipmentAdapter.ViewHolder>
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         val binding = holder.binding
-        // TODO
+
+        binding.name.text = item.name
     }
 
     class ViewHolder(val binding: ItemEquipmentBinding) :
