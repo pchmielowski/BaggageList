@@ -35,5 +35,20 @@ internal class EquipmentListViewModelTest {
             assertThat(model)
                 .matches { it.isInputVisible }
         }
+
+        @Nested
+        inner class `on item name entered and confirmed adding` {
+
+            init {
+                viewModel.onNewItemNameEnter("Socks")
+            }
+
+            @Test
+            internal fun `input is not displayed`() = runBlockingTest {
+                val model = viewModel.observeModel().first()
+                assertThat(model)
+                    .matches { !it.isInputVisible }
+            }
+        }
     }
 }
