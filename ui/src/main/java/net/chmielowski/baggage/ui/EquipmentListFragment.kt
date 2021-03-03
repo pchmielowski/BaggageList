@@ -36,35 +36,48 @@ class EquipmentListViewModel : ViewModel() {
     )
 
     fun onAddItemClick() {
+        store.accept(Intent.AddNew)
     }
 
     fun observeModel(): Flow<Model> = store.states
 
     fun observeLabels() = store.labels
 
-    sealed class Intent
+    sealed class Intent {
+        object AddNew : Intent()
+    }
 
-    private sealed class Result
+    private sealed class Result {
+        class NewState(val state: State) : Result()
+    }
 
     sealed class Label
 
     private data class State(
+        val isAddingNew: Boolean = false,
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
 
-        override val isInputVisible get() = true
+        override val isInputVisible get() = isAddingNew
     }
 
     interface Model {
         val isInputVisible: Boolean
     }
 
-    private class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>()
+    private class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>() {
+
+        override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
+            Intent.AddNew -> dispatch(Result.NewState(getState().copy(isAddingNew = true)))
+        }
+    }
 
     private class ReducerImpl : Reducer<State, Result> {
 
         override fun State.reduce(result: Result): State {
-            return this
+            return when (result) {
+                is Result.NewState -> result.state
+            }
         }
     }
 }
