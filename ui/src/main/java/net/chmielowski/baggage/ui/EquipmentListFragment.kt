@@ -35,6 +35,9 @@ class EquipmentListViewModel : ViewModel() {
         reducer = ReducerImpl(),
     )
 
+    fun onAddItemClick() {
+    }
+
     fun observeModel(): Flow<Model> = store.states
 
     fun observeLabels() = store.labels
@@ -47,9 +50,14 @@ class EquipmentListViewModel : ViewModel() {
 
     private data class State(
         val equipmentList: List<EquipmentDto> = emptyList(),
-    ) : Model
+    ) : Model {
 
-    interface Model
+        override val isInputVisible get() = true
+    }
+
+    interface Model {
+        val isInputVisible: Boolean
+    }
 
     private class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>()
 
