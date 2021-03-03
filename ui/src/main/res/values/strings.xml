@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Baggage</string>
+    <string name="action_add_new_item">Add new item</string>
 </resources>
