@@ -63,10 +63,14 @@ class EquipmentListViewModel : ViewModel() {
     ) : Model {
 
         override val isInputVisible get() = isAddingNew
+
+        override val items get() = listOf(EquipmentItem(EquipmentId(0),"Socks"))
+//        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name) }
     }
 
     interface Model {
         val isInputVisible: Boolean
+        val items: List<EquipmentItem>
     }
 
     private class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>() {

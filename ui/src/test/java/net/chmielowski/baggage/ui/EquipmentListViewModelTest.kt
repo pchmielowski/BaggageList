@@ -50,6 +50,14 @@ internal class EquipmentListViewModelTest {
                 assertThat(model)
                     .matches { !it.isInputVisible }
             }
+
+            @Test
+            internal fun `item is present on the list`() = runBlockingTest {
+                val model = viewModel.observeModel().first()
+                assertThat(model.items)
+                    .extracting<String> { it.name }
+                    .contains("Socks")
+            }
         }
     }
 }
