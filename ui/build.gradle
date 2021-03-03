@@ -58,8 +58,10 @@ dependencies {
     implementation "com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mvi_kotlin_version"
 
     // Data
-    implementation "com.squareup.sqldelight:android-driver:1.4.4"
+    def sqlDelightVersion = "1.4.4"
+    implementation "com.squareup.sqldelight:android-driver:$sqlDelightVersion"
+    testImplementation "com.squareup.sqldelight:sqlite-driver:$sqlDelightVersion"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    testImplementation "org.assertj:assertj-core:3.11.1"
+    testImplementation "org.assertj:assertj-core:3.19.0"
 }

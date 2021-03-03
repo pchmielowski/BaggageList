@@ -12,7 +12,7 @@ class BaggageApplication : Application() {
         super.onCreate()
         startKoin {
             module {
-                viewModel { EquipmentListViewModel() }
+                viewModel { EquipmentListViewModel(get()) }
             }
         }
     }

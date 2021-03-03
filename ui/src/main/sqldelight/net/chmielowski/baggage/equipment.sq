@@ -1,0 +1,6 @@
+import net.chmielowski.baggage.ui.EquipmentId;
+
+CREATE TABLE equipment (
+    id INTEGER AS EquipmentId PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);

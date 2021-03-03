@@ -20,11 +20,11 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         val adapter = EquipmentAdapter()
         binding.list.adapter = adapter
 
-        adapter.submitList((1..30).map { EquipmentItem(EquipmentId(it), "Item $it") })
+        adapter.submitList((1..30).map { EquipmentItem(EquipmentId(it.toLong()), "Item $it") })
     }
 }
 
-class EquipmentListViewModel : ViewModel() {
+class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
     private val storeFactory = DefaultStoreFactory
 

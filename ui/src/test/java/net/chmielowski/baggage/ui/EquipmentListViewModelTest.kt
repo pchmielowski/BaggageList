@@ -1,14 +1,29 @@
 package net.chmielowski.baggage.ui
 
 import com.arkivanov.mvikotlin.core.utils.isAssertOnMainThreadEnabled
+import com.squareup.sqldelight.ColumnAdapter
+import com.squareup.sqldelight.db.SqlDriver
+import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
+import net.chmielowski.baggage.Equipment
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+
+private class SimpleAdapter<T : Any, S>(
+    private val decoder: (S) -> T,
+    private val encoder: (T) -> S
+) : ColumnAdapter<T, S> {
+
+    override fun decode(databaseValue: S) = decoder(databaseValue)
+
+    override fun encode(value: T) = encoder(value)
+}
+
 
 @Suppress("ClassName")
 internal class EquipmentListViewModelTest {
@@ -20,7 +35,20 @@ internal class EquipmentListViewModelTest {
         isAssertOnMainThreadEnabled = false
     }
 
-    private val viewModel = EquipmentListViewModel()
+    private fun createTestDatabase(): Database {
+        val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+        Database.Schema.create(driver)
+        return Database(
+            driver,
+            Equipment.Adapter(
+                SimpleAdapter(::EquipmentId, EquipmentId::value),
+            )
+        )
+    }
+
+    private val viewModel = EquipmentListViewModel(
+        createTestDatabase()
+    )
 
     @Nested
     inner class `on Add Item clicked` {
