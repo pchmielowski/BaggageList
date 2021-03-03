@@ -60,6 +60,7 @@ dependencies {
     // Data
     def sqlDelightVersion = "1.4.4"
     implementation "com.squareup.sqldelight:android-driver:$sqlDelightVersion"
+    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqlDelightVersion"
     testImplementation "com.squareup.sqldelight:sqlite-driver:$sqlDelightVersion"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'

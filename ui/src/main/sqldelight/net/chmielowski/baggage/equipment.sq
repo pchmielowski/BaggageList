@@ -4,3 +4,13 @@ CREATE TABLE equipment (
     id INTEGER AS EquipmentId PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
 );
+
+selectEquipments:
+SELECT *
+FROM equipment
+;
+
+insertEquimpent:
+INSERT INTO equipment (name)
+VALUES (?)
+;

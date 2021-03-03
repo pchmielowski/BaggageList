@@ -5,12 +5,17 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.extensions.coroutines.SuspendExecutor
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.states
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import net.chmielowski.baggage.ui.databinding.ScreenEquipmentListBinding
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
@@ -31,9 +36,24 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     private val store = storeFactory.create(
         name = "EquipmentListStore",
         initialState = State(),
-        executorFactory = EquipmentListViewModel::Executor,
+        executorFactory = { Executor() },
         reducer = ReducerImpl(),
     )
+
+    init {
+        val mapToList = observeEquipmentList()
+        viewModelScope.launch {
+            mapToList
+                .collectLatest { list ->
+                    store.accept(Intent.ListUpdate(list))
+                }
+        }
+    }
+
+    private fun observeEquipmentList() = database.equipmentQueries
+        .selectEquipments(::EquipmentDto)
+        .asFlow()
+        .mapToList()
 
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
@@ -48,8 +68,10 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     fun observeLabels() = store.labels
 
     sealed class Intent {
-        data class NewItemNameEnter(val name: String) : Intent()
+        data class ListUpdate(val list: List<EquipmentDto>) : Intent()
+
         object AddNew : Intent()
+        data class NewItemNameEnter(val name: String) : Intent()
         object AddingItemConfirm : Intent()
     }
 
@@ -76,21 +98,22 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         val items: List<EquipmentItem>
     }
 
-    private class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>() {
+    private inner class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>() {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
+            is Intent.ListUpdate -> dispatch(Result.NewState(getState().copy(equipmentList = intent.list)))
             Intent.AddNew -> dispatch(Result.NewState(getState().copy(isAddingNew = true)))
-            Intent.AddingItemConfirm -> dispatch(
-                Result.NewState(
-                    getState().copy(
-                        isAddingNew = false,
-                        equipmentList = getState().equipmentList + EquipmentDto(
-                            EquipmentId(0), getState().newItemName
+            is Intent.NewItemNameEnter -> dispatch(Result.NewState(getState().copy(newItemName = intent.name)))
+            Intent.AddingItemConfirm -> {
+                database.equipmentQueries.insertEquimpent(getState().newItemName)
+                dispatch(
+                    Result.NewState(
+                        getState().copy(
+                            isAddingNew = false,
                         )
                     )
                 )
-            )
-            is Intent.NewItemNameEnter -> dispatch(Result.NewState(getState().copy(newItemName = intent.name)))
+            }
         }
     }
 
