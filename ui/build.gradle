@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.squareup.sqldelight'
 }
 
 android {
@@ -39,8 +40,19 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
 
+    def koin_version = '2.2.2'
+    implementation "org.koin:koin-core:$koin_version"
+    implementation "org.koin:koin-core-ext:$koin_version"
+    implementation "org.koin:koin-androidx-scope:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+    implementation "org.koin:koin-androidx-fragment:$koin_version"
+    implementation "org.koin:koin-androidx-ext:$koin_version"
+
     def mvi_kotlin_version = "2.0.1"
     implementation "com.arkivanov.mvikotlin:mvikotlin:$mvi_kotlin_version"
     implementation "com.arkivanov.mvikotlin:mvikotlin-main:$mvi_kotlin_version"
     implementation "com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mvi_kotlin_version"
+
+    // Data
+    implementation "com.squareup.sqldelight:android-driver:1.4.4"
 }
