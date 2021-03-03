@@ -24,7 +24,6 @@ internal class EquipmentListViewModelTest {
 
     @Test
     internal fun `on Add Item clicked, input is displayed`() = runBlockingTest(dispatcher) {
-
         viewModel.onAddItemClick()
 
         val model = viewModel.observeModel().first()
