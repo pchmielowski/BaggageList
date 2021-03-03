@@ -38,6 +38,7 @@ class EquipmentListViewModel : ViewModel() {
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
     fun onNewItemNameEnter(name: String) {
+        store.accept(Intent.NewItemNameEnter(name))
     }
 
     fun onAddingNewItemConfirm() = store.accept(Intent.AddingItemConfirm)
@@ -47,6 +48,7 @@ class EquipmentListViewModel : ViewModel() {
     fun observeLabels() = store.labels
 
     sealed class Intent {
+        data class NewItemNameEnter(val name: String) : Intent()
         object AddNew : Intent()
         object AddingItemConfirm : Intent()
     }
@@ -58,14 +60,15 @@ class EquipmentListViewModel : ViewModel() {
     sealed class Label
 
     private data class State(
+        val newItemName: String = "",
         val isAddingNew: Boolean = false,
+
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
 
         override val isInputVisible get() = isAddingNew
 
-        override val items get() = listOf(EquipmentItem(EquipmentId(0),"Socks"))
-//        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name) }
+        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name) }
     }
 
     interface Model {
@@ -77,7 +80,17 @@ class EquipmentListViewModel : ViewModel() {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             Intent.AddNew -> dispatch(Result.NewState(getState().copy(isAddingNew = true)))
-            Intent.AddingItemConfirm -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
+            Intent.AddingItemConfirm -> dispatch(
+                Result.NewState(
+                    getState().copy(
+                        isAddingNew = false,
+                        equipmentList = getState().equipmentList + EquipmentDto(
+                            EquipmentId(0), getState().newItemName
+                        )
+                    )
+                )
+            )
+            is Intent.NewItemNameEnter -> dispatch(Result.NewState(getState().copy(newItemName = intent.name)))
         }
     }
 
