@@ -7,20 +7,18 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class EquipmentListViewModelTest {
 
     private val dispatcher = TestCoroutineDispatcher()
 
-    private val viewModel = EquipmentListViewModel()
-
-    @BeforeEach
-    internal fun setUp() {
+    init {
         Dispatchers.setMain(dispatcher)
         isAssertOnMainThreadEnabled = false
     }
+
+    private val viewModel = EquipmentListViewModel()
 
     @Test
     internal fun `on Add Item clicked, input is displayed`() = runBlockingTest(dispatcher) {
