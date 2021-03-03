@@ -7,8 +7,10 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
+@Suppress("ClassName")
 internal class EquipmentListViewModelTest {
 
     private val dispatcher = TestCoroutineDispatcher()
@@ -20,12 +22,18 @@ internal class EquipmentListViewModelTest {
 
     private val viewModel = EquipmentListViewModel()
 
-    @Test
-    internal fun `on Add Item clicked, input is displayed`() = runBlockingTest(dispatcher) {
-        viewModel.onAddItemClick()
+    @Nested
+    inner class `on Add Item clicked` {
 
-        val model = viewModel.observeModel().first()
-        assertThat(model)
-            .matches { it.isInputVisible }
+        init {
+            viewModel.onAddItemClick()
+        }
+
+        @Test
+        internal fun `input is displayed`() = runBlockingTest(dispatcher) {
+            val model = viewModel.observeModel().first()
+            assertThat(model)
+                .matches { it.isInputVisible }
+        }
     }
 }
