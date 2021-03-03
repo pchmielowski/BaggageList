@@ -35,16 +35,12 @@ class EquipmentListViewModel : ViewModel() {
         reducer = ReducerImpl(),
     )
 
-    fun onAddItemClick() {
-        store.accept(Intent.AddNew)
-    }
+    fun onAddItemClick() = store.accept(Intent.AddNew)
 
     fun onNewItemNameEnter(name: String) {
     }
 
-    fun onAddingNewItemConfirm() {
-        store.accept(Intent.AddingItemConfirm)
-    }
+    fun onAddingNewItemConfirm() = store.accept(Intent.AddingItemConfirm)
 
     fun observeModel(): Flow<Model> = store.states
 
