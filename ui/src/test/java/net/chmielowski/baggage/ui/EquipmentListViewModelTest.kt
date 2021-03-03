@@ -41,6 +41,7 @@ internal class EquipmentListViewModelTest {
 
             init {
                 viewModel.onNewItemNameEnter("Socks")
+                viewModel.onAddingNewItemConfirm()
             }
 
             @Test

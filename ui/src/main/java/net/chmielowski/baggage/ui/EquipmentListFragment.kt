@@ -40,7 +40,10 @@ class EquipmentListViewModel : ViewModel() {
     }
 
     fun onNewItemNameEnter(name: String) {
-        store.accept(Intent.NewItemNameEnter)
+    }
+
+    fun onAddingNewItemConfirm() {
+        store.accept(Intent.AddingItemConfirm)
     }
 
     fun observeModel(): Flow<Model> = store.states
@@ -49,7 +52,7 @@ class EquipmentListViewModel : ViewModel() {
 
     sealed class Intent {
         object AddNew : Intent()
-        object NewItemNameEnter : Intent()
+        object AddingItemConfirm : Intent()
     }
 
     private sealed class Result {
@@ -74,7 +77,7 @@ class EquipmentListViewModel : ViewModel() {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             Intent.AddNew -> dispatch(Result.NewState(getState().copy(isAddingNew = true)))
-            Intent.NewItemNameEnter -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
+            Intent.AddingItemConfirm -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
         }
     }
 
