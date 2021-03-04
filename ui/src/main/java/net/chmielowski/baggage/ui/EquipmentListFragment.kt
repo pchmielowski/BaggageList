@@ -27,7 +27,9 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModel by viewModel<EquipmentListViewModel>()
         val binding = ScreenEquipmentListBinding.bind(view)
-        val adapter = EquipmentAdapter()
+        val adapter = EquipmentAdapter(
+            onItemClicked = { id -> viewModel.onItemClick(id) },
+        )
         binding.list.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {

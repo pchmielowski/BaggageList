@@ -7,10 +7,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import net.chmielowski.baggage.ui.databinding.ItemEquipmentBinding
 
-class EquipmentAdapter : ListAdapter<EquipmentItem, EquipmentAdapter.ViewHolder>(Callback) {
+class EquipmentAdapter(
+    private val onItemClicked: (EquipmentId) -> Unit,
+) : ListAdapter<EquipmentItem, EquipmentAdapter.ViewHolder>(Callback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(ItemEquipmentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding =
+            ItemEquipmentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val holder = ViewHolder(binding)
+        binding.name.setOnCheckedChangeListener { _, _ ->
+            onItemClicked(getItem(holder.adapterPosition).id)
+        }
+        return holder
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
