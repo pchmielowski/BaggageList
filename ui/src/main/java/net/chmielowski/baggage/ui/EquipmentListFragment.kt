@@ -20,7 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
-    private var optionsMenu: Menu? = null
+    private val optionsMenuDelegate = OptionsMenuDelegate()
 
     private val viewModel by viewModel<EquipmentListViewModel>()
 
@@ -40,8 +40,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
                 binding.render(adapter, model)
-                optionsMenu!!.findItem(R.id.menuItemDelete).isVisible = model.isDeleteButtonVisible
-                optionsMenu!!.findItem(R.id.menuItemCancelDeleting).isVisible = model.isCancelDeletingVisible
+                optionsMenuDelegate.render(model)
                 addNewBinding.render(model)
             }
         }
@@ -92,12 +91,11 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_equipment, menu)
-        optionsMenu = menu
+        optionsMenuDelegate.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onDestroyOptionsMenu() {
-        optionsMenu = null
+        optionsMenuDelegate.onDestroyOptionsMenu()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -111,6 +109,39 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
                 true
             }
             else -> false
+        }
+    }
+
+    class OptionsMenuDelegate {
+
+        private var lastModel: EquipmentListViewModel.Model? = null
+
+        private var delete: MenuItem? = null
+
+        private var cancel: MenuItem? = null
+
+        fun render(model: EquipmentListViewModel.Model) {
+            lastModel = model
+            refresh()
+        }
+
+        fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+            inflater.inflate(R.menu.menu_equipment, menu)
+            delete = menu.findItem(R.id.menuItemDelete)
+            cancel = menu.findItem(R.id.menuItemCancelDeleting)
+
+            refresh()
+        }
+
+        private fun refresh() {
+            val model = lastModel ?: return
+            delete?.isVisible = model.isDeleteButtonVisible
+            cancel?.isVisible = model.isCancelDeletingVisible
+        }
+
+        fun onDestroyOptionsMenu() {
+            delete = null
+            cancel = null
         }
     }
 }
