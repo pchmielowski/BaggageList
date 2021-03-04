@@ -3,7 +3,6 @@ package net.chmielowski.baggage.ui
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.OvershootInterpolator
 import android.view.animation.Transformation
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -49,7 +48,6 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
             model.progress
         )
         animation.duration = 100
-        animation.interpolator = OvershootInterpolator()
         progress.progressIndicator.startAnimation(animation)
 
         progress.progressMessage.text =
