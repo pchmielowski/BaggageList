@@ -1,6 +1,7 @@
 package net.chmielowski.baggage.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -13,6 +14,8 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import net.chmielowski.baggage.ui.databinding.ScreenEquipmentListBinding
 import net.chmielowski.baggage.ui.databinding.ViewAddEquipmentBinding
@@ -48,6 +51,13 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
         binding.bindListeners(viewModel)
         addNewBinding.bindListeners(viewModel)
+
+        Snackbar
+            .make(view, R.string.message_item_deleted, LENGTH_INDEFINITE)
+            .setAction(R.string.action_undo) {
+                Log.d("pchm", "Undo")
+            }
+            .show()
     }
 
     private fun ScreenEquipmentListBinding.render(

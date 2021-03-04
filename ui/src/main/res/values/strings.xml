@@ -2,10 +2,13 @@
     <string name="app_name">Baggage</string>
 
     <string name="label_new_item_name">New item name</string>
+    <string name="label_packing_progress">Packing progress: %d%%</string>
 
     <string name="action_add_new_item">Add new item</string>
     <string name="action_confirm">Confirm</string>
     <string name="action_cancel">Cancel</string>
-    <string name="label_packing_progress">Packing progress: %d%%</string>
+    <string name="action_undo">Undo</string>
     <string name="action_delete">Delete</string>
+
+    <string name="message_item_deleted">Item deleted</string>
 </resources>
