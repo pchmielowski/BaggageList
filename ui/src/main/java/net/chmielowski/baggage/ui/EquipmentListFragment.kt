@@ -55,7 +55,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
                     ShowUndoSnackbar -> Snackbar
                         .make(view, R.string.message_item_deleted, LENGTH_INDEFINITE)
                         .setAction(R.string.action_undo) {
-                            Log.d("pchm", "Undo")
+                            viewModel.onUndoDeleteClick()
                         }
                         .show()
                 }.let { }
