@@ -56,6 +56,10 @@ class EquipmentListViewModel(
 
     fun observeModel(): Flow<Model> = store.states
 
+    fun onDeleteClick() {
+
+    }
+
     sealed class Intent {
         data class ListUpdate(val list: List<EquipmentDto>) : Intent()
 
@@ -93,7 +97,7 @@ class EquipmentListViewModel(
 
         override val isAddNewVisible get() = newItem is Hidden
 
-        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name, it.isPacked) }
+        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name, it.isPacked, true) } // TODO!
 
         sealed class NewItemInput {
             object Hidden : NewItemInput()

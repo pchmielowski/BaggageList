@@ -32,7 +32,11 @@ internal class EquipmentListViewModelTest {
     private val database = createTestDatabase()
         .apply { addDummyItem() }
 
-    private val viewModel = EquipmentListViewModel(database)
+    private val viewModel = EquipmentListViewModel(
+        ObserveEquipments(database, dispatcher),
+        InsertEquipment(database),
+        SetEquipmentPacked(database),
+    )
 
     @Nested
     inner class `on Add Item clicked` {
@@ -122,6 +126,20 @@ internal class EquipmentListViewModelTest {
                 assertThat(currentModel().items.single { it.name == "Pants" })
                     .matches { !it.isChecked }
             }
+        }
+    }
+
+    @Nested
+    inner class `on Delete icon clicked` {
+
+        init {
+            viewModel.onDeleteClick()
+        }
+
+        @Test
+        internal fun `delete buttons are visible on each item`() = runBlockingTest {
+            assertThat(currentModel().items)
+                .allMatch { it.isDeleteVisible }
         }
     }
 
