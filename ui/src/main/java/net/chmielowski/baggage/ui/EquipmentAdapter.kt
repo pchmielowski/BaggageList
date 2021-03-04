@@ -2,6 +2,7 @@ package net.chmielowski.baggage.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,9 @@ class EquipmentAdapter(
         binding.name.setOnCheckedChangeListener { _, isChecked ->
             onItemToggled(getItem(holder.adapterPosition).id, isChecked)
         }
+        binding.delete.setOnClickListener {
+            // TODO
+        }
         return holder
     }
 
@@ -27,6 +31,7 @@ class EquipmentAdapter(
 
         binding.name.text = item.name
         binding.name.isChecked = item.isChecked
+        binding.delete.isVisible = item.isDeleteVisible
     }
 
     class ViewHolder(val binding: ItemEquipmentBinding) :
