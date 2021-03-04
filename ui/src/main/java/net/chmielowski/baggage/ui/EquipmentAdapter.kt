@@ -35,8 +35,7 @@ class EquipmentAdapter(
         binding.delete.isVisible = item.isDeleteVisible
     }
 
-    class ViewHolder(val binding: ItemEquipmentBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: ItemEquipmentBinding) : RecyclerView.ViewHolder(binding.root)
 
     private object Callback : DiffUtil.ItemCallback<EquipmentItem>() {
 
