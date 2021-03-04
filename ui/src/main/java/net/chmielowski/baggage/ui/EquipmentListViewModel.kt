@@ -23,6 +23,7 @@ class EquipmentListViewModel(
     private val insertEquipment: InsertEquipment,
     private val setEquipmentPacked: SetEquipmentPacked,
     private val deleteEquipment: DeleteEquipment,
+    private val undoDeleteEquipment: UndoDeleteEquipment,
 ) : ViewModel() {
 
     private val storeFactory = DefaultStoreFactory
@@ -62,6 +63,8 @@ class EquipmentListViewModel(
 
     fun onCancelDeletingClick() = store.accept(Intent.CancelDeletingClick)
 
+    fun onUndoDeleteClick() = store.accept(Intent.UndoDeleting)
+
     fun observeModel(): Flow<Model> = store.states
 
     fun observeLabels() = store.labels
@@ -80,6 +83,7 @@ class EquipmentListViewModel(
         data class ItemPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
 
         data class DeleteItem(val id: EquipmentId) : Intent()
+        object UndoDeleting : Intent()
     }
 
     private sealed class Result {
@@ -93,6 +97,7 @@ class EquipmentListViewModel(
     private data class State(
         val newItem: NewItemInput = Hidden,
         val isDeleteMode: Boolean = false,
+        val lastDeleted: EquipmentId? = null,
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
 
@@ -124,8 +129,6 @@ class EquipmentListViewModel(
 
         override val isDeleteButtonVisible get() = !isDeleteMode
 
-        override val isUndoDeleteVisible get() = true
-
         sealed class NewItemInput {
             object Hidden : NewItemInput()
             data class Visible(val text: String) : NewItemInput()
@@ -139,7 +142,6 @@ class EquipmentListViewModel(
         val items: List<EquipmentItem>
         val isCancelDeletingVisible: Boolean
         val isDeleteButtonVisible: Boolean
-        val isUndoDeleteVisible: Boolean
     }
 
     private inner class Executor :
@@ -170,9 +172,11 @@ class EquipmentListViewModel(
                 copy(isDeleteMode = false)
             }
             is Intent.DeleteItem -> {
+                dispatchState(getState) { copy(lastDeleted = intent.id) }
                 deleteEquipment(intent.id)
                 publish(Label.ShowUndoSnackbar)
             }
+            Intent.UndoDeleting -> undoDeleteEquipment(getState().lastDeleted!!)
         }
 
         private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
@@ -225,5 +229,14 @@ class DeleteEquipment(private val database: Database) {
     // TODO: Dispatcher
     operator fun invoke(id: EquipmentId) {
         database.equipmentQueries.deleteEquipment(id)
+    }
+}
+
+// TODO: Move
+class UndoDeleteEquipment(private val database: Database) {
+
+    // TODO: Dispatcher
+    operator fun invoke(id: EquipmentId) {
+        database.equipmentQueries.undoDeleteEquipment(id)
     }
 }

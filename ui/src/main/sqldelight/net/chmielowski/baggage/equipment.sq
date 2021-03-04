@@ -4,17 +4,19 @@ import net.chmielowski.baggage.ui.EquipmentId;
 CREATE TABLE equipment (
     id INTEGER AS EquipmentId PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    isPacked INTEGER AS Boolean NOT NULL
+    isPacked INTEGER AS Boolean NOT NULL,
+    isDeleted INTEGER AS Boolean NOT NULL
 );
 
 selectEquipments:
-SELECT *
+SELECT id, name, isPacked
 FROM equipment
+WHERE isDeleted = 0
 ;
 
 insertEquimpent:
-INSERT INTO equipment (name, isPacked)
-VALUES (?, 0)
+INSERT INTO equipment (name, isPacked, isDeleted)
+VALUES (?, 0, 0)
 ;
 
 setEquipmentPacked:
@@ -24,6 +26,13 @@ WHERE id = ?1
 ;
 
 deleteEquipment:
-DELETE FROM equipment
+UPDATE equipment
+SET isDeleted = 1
+WHERE id = ?
+;
+
+undoDeleteEquipment:
+UPDATE equipment
+SET isDeleted = 0
 WHERE id = ?
 ;

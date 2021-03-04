@@ -37,6 +37,7 @@ internal class EquipmentListViewModelTest {
         InsertEquipment(database),
         SetEquipmentPacked(database),
         DeleteEquipment(database),
+        UndoDeleteEquipment(database),
     )
 
     private val dummyItemId = database.equipmentQueries.selectEquipments()
@@ -162,10 +163,18 @@ internal class EquipmentListViewModelTest {
                     .noneMatch { it.id == dummyItemId }
             }
 
-            @Test
-            internal fun `undo delete is displayed`() = runBlockingTest {
-                assertThat(currentModel())
-                    .matches { it.isUndoDeleteVisible }
+            @Nested
+            inner class `on Undo click` {
+
+                init {
+                    viewModel.onUndoDeleteClick()
+                }
+
+                @Test
+                internal fun `item is again present on the list`() = runBlockingTest {
+                    assertThat(currentModel().items)
+                        .anyMatch { it.id == dummyItemId }
+                }
             }
         }
 
@@ -191,6 +200,8 @@ internal class EquipmentListViewModelTest {
     }
 
     private suspend fun currentModel() = viewModel.observeModel().first()
+
+    private suspend fun lastLabel() = viewModel.observeLabels().first()
 }
 
 private fun Database.addDummyItem() = equipmentQueries.insertEquimpent("Pants")

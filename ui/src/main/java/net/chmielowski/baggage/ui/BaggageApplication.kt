@@ -28,7 +28,8 @@ class BaggageApplication : Application() {
                     factory { InsertEquipment(get()) }
                     factory { SetEquipmentPacked(get()) }
                     factory { DeleteEquipment(get()) }
-                    viewModel { EquipmentListViewModel(get(), get(), get(), get()) }
+                    factory { UndoDeleteEquipment(get()) }
+                    viewModel { EquipmentListViewModel(get(), get(), get(), get(), get()) }
                 }
             )
         }
