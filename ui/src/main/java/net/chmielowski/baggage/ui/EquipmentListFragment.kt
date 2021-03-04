@@ -40,6 +40,9 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     ) {
         adapter.submitList(model.items)
         addNew.isVisible = model.isAddNewVisible
+        progressIndicator.progress = model.progress
+        progressMessage.text =
+            requireContext().getString(R.string.label_packing_progress, model.progress)
     }
 
     private fun ViewAddEquipmentBinding.render(

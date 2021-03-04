@@ -19,15 +19,16 @@
             android:orientation="vertical">
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:progress="23" />
 
             <TextView
+                android:id="@+id/progressMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="@string/label_packing_progress" />
+                android:layout_margin="8dp" />
 
         </LinearLayout>
 
