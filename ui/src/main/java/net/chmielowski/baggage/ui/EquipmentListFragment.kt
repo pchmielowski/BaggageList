@@ -91,13 +91,10 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
         optionsMenuDelegate.onCreateOptionsMenu(menu, inflater)
-    }
 
-    override fun onDestroyOptionsMenu() {
-        optionsMenuDelegate.onDestroyOptionsMenu()
-    }
+    override fun onDestroyOptionsMenu() = optionsMenuDelegate.onDestroyOptionsMenu()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
