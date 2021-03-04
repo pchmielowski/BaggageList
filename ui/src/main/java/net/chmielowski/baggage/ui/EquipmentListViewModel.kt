@@ -81,8 +81,11 @@ class EquipmentListViewModel(
 
         override val progress: Int
             get() {
+                val all = equipmentList.size
+                if (all == 0) {
+                    return 0
+                }
                 val packed = equipmentList.count { it.isPacked }.toFloat()
-                val all = equipmentList.size.toFloat()
                 return (packed / all * 100).roundToInt()
             }
 
