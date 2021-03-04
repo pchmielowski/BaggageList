@@ -19,6 +19,6 @@ VALUES (?, 0)
 
 setEquipmentPacked:
 UPDATE equipment
-SET isPacked = 1
-WHERE id = ?
+SET isPacked = ?2
+WHERE id = ?1
 ;

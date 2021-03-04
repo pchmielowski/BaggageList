@@ -87,20 +87,35 @@ internal class EquipmentListViewModelTest {
     }
 
     @Nested
-    inner class `on dummy item checked` {
+    inner class `on dummy item checked as packed` {
+
+        private val id = database.equipmentQueries.selectEquipments()
+            .executeAsList()
+            .single { it.name == "Pants" }
+            .id
 
         init {
-            val id = database.equipmentQueries.selectEquipments()
-                .executeAsList()
-                .single { it.name == "Pants" }
-                .id
-            viewModel.onItemClick(id)
+            viewModel.onItemPackedToggle(id, isPacked = true)
         }
 
         @Test
         internal fun `it is checked`() = runBlockingTest {
             assertThat(currentModel().items.single { it.name == "Pants" })
                 .matches { it.isChecked }
+        }
+
+        @Nested
+        inner class `on checked as not packed` {
+
+            init {
+                viewModel.onItemPackedToggle(id, isPacked = false)
+            }
+
+            @Test
+            internal fun `it is not checked`() = runBlockingTest {
+                assertThat(currentModel().items.single { it.name == "Pants" })
+                    .matches { !it.isChecked }
+            }
         }
     }
 

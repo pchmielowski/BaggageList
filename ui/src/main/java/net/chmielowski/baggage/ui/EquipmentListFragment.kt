@@ -28,7 +28,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         val viewModel by viewModel<EquipmentListViewModel>()
         val binding = ScreenEquipmentListBinding.bind(view)
         val adapter = EquipmentAdapter(
-            onItemClicked = { id -> viewModel.onItemClick(id) },
+            onItemClicked = { id -> viewModel.onItemPackedToggle(id, true) },
         )
         binding.list.adapter = adapter
 
@@ -110,9 +110,8 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
     fun onCancelAddingClick() = store.accept(Intent.AddingNewCancel)
 
-    fun onItemClick(id: EquipmentId) {
-        store.accept(Intent.ItemPacked(id))
-    }
+    fun onItemPackedToggle(id: EquipmentId, isPacked: Boolean) =
+        store.accept(Intent.ItemPacked(id, isPacked))
 
     fun observeModel(): Flow<Model> = store.states
 
@@ -126,7 +125,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         object AddingItemConfirm : Intent()
         object AddingNewCancel : Intent()
 
-        data class ItemPacked(val id: EquipmentId) : Intent()
+        data class ItemPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
     }
 
     private sealed class Result {
@@ -176,7 +175,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
             Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
             is Intent.ItemPacked -> {
                 // TODO: Class
-                database.equipmentQueries.setEquipmentPacked(intent.id)
+                database.equipmentQueries.setEquipmentPacked(intent.id, intent.isPacked)
             }
         }
     }
