@@ -36,7 +36,13 @@ internal class EquipmentListViewModelTest {
         ObserveEquipments(database, dispatcher),
         InsertEquipment(database),
         SetEquipmentPacked(database),
+        DeleteEquipment(database),
     )
+
+    private val dummyItemId = database.equipmentQueries.selectEquipments()
+        .executeAsList()
+        .single { it.name == "Pants" }
+        .id
 
     @Nested
     inner class `on Add Item clicked` {
@@ -93,13 +99,8 @@ internal class EquipmentListViewModelTest {
     @Nested
     inner class `on dummy item checked as packed` {
 
-        private val id = database.equipmentQueries.selectEquipments()
-            .executeAsList()
-            .single { it.name == "Pants" }
-            .id
-
         init {
-            viewModel.onItemPackedToggle(id, isPacked = true)
+            viewModel.onItemPackedToggle(dummyItemId, isPacked = true)
         }
 
         @Test
@@ -118,7 +119,7 @@ internal class EquipmentListViewModelTest {
         inner class `on checked as not packed` {
 
             init {
-                viewModel.onItemPackedToggle(id, isPacked = false)
+                viewModel.onItemPackedToggle(dummyItemId, isPacked = false)
             }
 
             @Test
@@ -146,6 +147,22 @@ internal class EquipmentListViewModelTest {
         internal fun `cancel deleting button is visible`() = runBlockingTest {
             assertThat(currentModel())
                 .matches { it.isCancelDeletingVisible }
+        }
+
+        @Nested
+        inner class `on delete item clicked` {
+
+            init {
+                viewModel.onDeleteItemClick(dummyItemId)
+            }
+
+            @Test
+            internal fun `item is no longer present on the list`() {
+                runBlockingTest {
+                    assertThat(currentModel().items)
+                        .noneMatch { it.id == dummyItemId }
+                }
+            }
         }
 
         @Nested

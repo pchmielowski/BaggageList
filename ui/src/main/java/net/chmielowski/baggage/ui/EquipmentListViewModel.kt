@@ -21,6 +21,7 @@ class EquipmentListViewModel(
     private val observeEquipments: ObserveEquipments,
     private val insertEquipment: InsertEquipment,
     private val setEquipmentPacked: SetEquipmentPacked,
+    private val deleteEquipment: DeleteEquipment,
 ) : ViewModel() {
 
     private val storeFactory = DefaultStoreFactory
@@ -56,6 +57,8 @@ class EquipmentListViewModel(
 
     fun onDeleteClick() = store.accept(Intent.DeleteClick)
 
+    fun onDeleteItemClick(id: EquipmentId) = store.accept(Intent.DeleteItem(id))
+
     fun onCancelDeletingClick() = store.accept(Intent.CancelDeletingClick)
 
     fun observeModel(): Flow<Model> = store.states
@@ -72,6 +75,8 @@ class EquipmentListViewModel(
         object CancelDeletingClick : Intent()
 
         data class ItemPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
+
+        data class DeleteItem(val id: EquipmentId) : Intent()
     }
 
     private sealed class Result {
@@ -156,6 +161,7 @@ class EquipmentListViewModel(
             Intent.CancelDeletingClick -> dispatchState(getState) {
                 copy(isDeleteMode = false)
             }
+            is Intent.DeleteItem -> deleteEquipment(intent.id)
         }
 
         private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
@@ -199,5 +205,14 @@ class SetEquipmentPacked(private val database: Database) {
     // TODO: Dispatcher
     operator fun invoke(id: EquipmentId, isPacked: Boolean) {
         database.equipmentQueries.setEquipmentPacked(id, isPacked)
+    }
+}
+
+// TODO: Move
+class DeleteEquipment(private val database: Database) {
+
+    // TODO: Dispatcher
+    operator fun invoke(id: EquipmentId) {
+        database.equipmentQueries.deleteEquipment(id)
     }
 }

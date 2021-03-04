@@ -33,7 +33,8 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         val binding = ScreenEquipmentListBinding.bind(view)
         val addNewBinding = ViewAddEquipmentBinding.bind(view)
         val adapter = EquipmentAdapter(
-            onItemToggled = { id, isToggled -> viewModel.onItemPackedToggle(id, isToggled) },
+            onItemToggled = viewModel::onItemPackedToggle,
+            onDeleteClicked = viewModel::onDeleteItemClick,
         )
         binding.list.adapter = adapter
 

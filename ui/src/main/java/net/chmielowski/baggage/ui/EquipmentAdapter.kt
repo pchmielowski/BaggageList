@@ -10,6 +10,7 @@ import net.chmielowski.baggage.ui.databinding.ItemEquipmentBinding
 
 class EquipmentAdapter(
     private val onItemToggled: (EquipmentId, isChecked: Boolean) -> Unit,
+    private val onDeleteClicked: (EquipmentId) -> Unit,
 ) : ListAdapter<EquipmentItem, EquipmentAdapter.ViewHolder>(Callback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,7 +21,7 @@ class EquipmentAdapter(
             onItemToggled(getItem(holder.adapterPosition).id, isChecked)
         }
         binding.delete.setOnClickListener {
-            // TODO
+            onDeleteClicked(getItem(holder.adapterPosition).id)
         }
         return holder
     }

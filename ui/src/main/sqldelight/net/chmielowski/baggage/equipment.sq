@@ -22,3 +22,8 @@ UPDATE equipment
 SET isPacked = ?2
 WHERE id = ?1
 ;
+
+deleteEquipment:
+DELETE FROM equipment
+WHERE id = ?
+;
