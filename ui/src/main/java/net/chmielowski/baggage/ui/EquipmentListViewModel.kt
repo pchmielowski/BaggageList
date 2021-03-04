@@ -8,14 +8,20 @@ import com.arkivanov.mvikotlin.extensions.coroutines.states
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Hidden
 import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Visible
+import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 
-class EquipmentListViewModel(private val database: Database) : ViewModel() {
+class EquipmentListViewModel(
+    private val observeEquipments: ObserveEquipments,
+    private val insertEquipment: InsertEquipment,
+    private val setEquipmentPacked: SetEquipmentPacked,
+) : ViewModel() {
 
     private val storeFactory = DefaultStoreFactory
 
@@ -27,20 +33,13 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     )
 
     init {
-        val mapToList = observeEquipmentList()
         viewModelScope.launch {
-            mapToList
+            observeEquipments()
                 .collectLatest { list ->
                     store.accept(Intent.ListUpdate(list))
                 }
         }
     }
-
-    // TODO: Class
-    private fun observeEquipmentList() = database.equipmentQueries
-        .selectEquipments(::EquipmentDto)
-        .asFlow()
-        .mapToList(viewModelScope.coroutineContext)
 
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
@@ -122,8 +121,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
                 )
             )
             Intent.AddingItemConfirm -> {
-                // TODO: Class
-                database.equipmentQueries.insertEquimpent((getState().newItem as Visible).text)
+                insertEquipment((getState().newItem as Visible).text)
                 dispatch(
                     Result.NewState(
                         getState().copy(
@@ -133,10 +131,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
                 )
             }
             Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(newItem = Hidden)))
-            is Intent.ItemPacked -> {
-                // TODO: Class
-                database.equipmentQueries.setEquipmentPacked(intent.id, intent.isPacked)
-            }
+            is Intent.ItemPacked -> setEquipmentPacked(intent.id, intent.isPacked)
         }
     }
 
@@ -147,5 +142,35 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
                 is Result.NewState -> result.state
             }
         }
+    }
+}
+
+// TODO: Move
+class ObserveEquipments(
+    private val database: Database,
+    private val context: CoroutineContext = Dispatchers.IO,
+) {
+
+    operator fun invoke() = database.equipmentQueries
+        .selectEquipments(::EquipmentDto)
+        .asFlow()
+        .mapToList(context)
+}
+
+// TODO: Move
+class InsertEquipment(private val database: Database) {
+
+    // TODO: Dispatcher
+    operator fun invoke(name: String) {
+        database.equipmentQueries.insertEquimpent(name)
+    }
+}
+
+// TODO: Move
+class SetEquipmentPacked(private val database: Database) {
+
+    // TODO: Dispatcher
+    operator fun invoke(id: EquipmentId, isPacked: Boolean) {
+        database.equipmentQueries.setEquipmentPacked(id, isPacked)
     }
 }

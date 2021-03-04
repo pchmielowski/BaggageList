@@ -24,7 +24,10 @@ class BaggageApplication : Application() {
                             AndroidSqliteDriver(Database.Schema, androidContext(), "main.db")
                         )
                     }
-                    viewModel { EquipmentListViewModel(get()) }
+                    factory { ObserveEquipments(get()) }
+                    factory { InsertEquipment(get()) }
+                    factory { SetEquipmentPacked(get()) }
+                    viewModel { EquipmentListViewModel(get(), get(), get()) }
                 }
             )
         }
