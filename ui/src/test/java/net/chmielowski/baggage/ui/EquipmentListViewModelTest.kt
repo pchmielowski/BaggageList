@@ -42,8 +42,7 @@ internal class EquipmentListViewModelTest {
 
         @Test
         internal fun `input is displayed`() = runBlockingTest(dispatcher) {
-            val model = viewModel.observeModel().first()
-            assertThat(model)
+            assertThat(currentModel())
                 .matches { it.isInputVisible }
         }
 
@@ -57,8 +56,7 @@ internal class EquipmentListViewModelTest {
             @Test
             internal fun `input is not visible`() {
                 runBlockingTest {
-                    val model = viewModel.observeModel().first()
-                    assertThat(model)
+                    assertThat(currentModel())
                         .matches { !it.isInputVisible }
                 }
             }
@@ -74,18 +72,18 @@ internal class EquipmentListViewModelTest {
 
             @Test
             internal fun `input is not displayed`() = runBlockingTest {
-                val model = viewModel.observeModel().first()
-                assertThat(model)
+                assertThat(currentModel())
                     .matches { !it.isInputVisible }
             }
 
             @Test
             internal fun `item is present on the list`() = runBlockingTest {
-                val model = viewModel.observeModel().first()
-                assertThat(model.items)
+                assertThat(currentModel().items)
                     .extracting<String> { it.name }
                     .contains("Socks")
             }
         }
     }
+
+    private suspend fun currentModel() = viewModel.observeModel().first()
 }
