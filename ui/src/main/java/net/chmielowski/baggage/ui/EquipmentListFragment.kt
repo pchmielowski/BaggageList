@@ -108,6 +108,9 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
     fun onCancelAddingClick() = store.accept(Intent.AddingNewCancel)
 
+    fun onItemClick(id: EquipmentId) {
+    }
+
     fun observeModel(): Flow<Model> = store.states
 
     fun observeLabels() = store.labels

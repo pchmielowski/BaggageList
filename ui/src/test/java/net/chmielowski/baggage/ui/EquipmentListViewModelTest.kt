@@ -29,9 +29,10 @@ internal class EquipmentListViewModelTest {
         isAssertOnMainThreadEnabled = false
     }
 
-    private val viewModel = EquipmentListViewModel(
-        createTestDatabase()
-    )
+    private val database = createTestDatabase()
+        .apply { addDummyItem() }
+
+    private val viewModel = EquipmentListViewModel(database)
 
     @Nested
     inner class `on Add Item clicked` {
@@ -85,5 +86,25 @@ internal class EquipmentListViewModelTest {
         }
     }
 
+    @Nested
+    inner class `on dummy item checked` {
+
+        init {
+            val id = database.equipmentQueries.selectEquipments()
+                .executeAsList()
+                .single { it.name == "Pants" }
+                .id
+            viewModel.onItemClick(id)
+        }
+
+        @Test
+        internal fun `it is checked`() = runBlockingTest {
+            assertThat(currentModel().items.single { it.name == "Pants" })
+                .matches { it.isChecked }
+        }
+    }
+
     private suspend fun currentModel() = viewModel.observeModel().first()
 }
+
+private fun Database.addDummyItem() = equipmentQueries.insertEquimpent("Pants")
