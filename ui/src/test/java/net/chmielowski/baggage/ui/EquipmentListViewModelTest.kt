@@ -157,11 +157,15 @@ internal class EquipmentListViewModelTest {
             }
 
             @Test
-            internal fun `item is no longer present on the list`() {
-                runBlockingTest {
-                    assertThat(currentModel().items)
-                        .noneMatch { it.id == dummyItemId }
-                }
+            internal fun `item is no longer present on the list`() = runBlockingTest {
+                assertThat(currentModel().items)
+                    .noneMatch { it.id == dummyItemId }
+            }
+
+            @Test
+            internal fun `undo delete is displayed`() = runBlockingTest {
+                assertThat(currentModel())
+                    .matches { it.isUndoDeleteVisible }
             }
         }
 
