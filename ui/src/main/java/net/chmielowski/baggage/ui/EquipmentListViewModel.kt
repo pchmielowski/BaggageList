@@ -109,30 +109,27 @@ class EquipmentListViewModel(
         SuspendExecutor<Intent, Nothing, State, Result, Label>(viewModelScope.coroutineContext) {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
-            is Intent.ListUpdate -> dispatch(Result.NewState(getState().copy(equipmentList = intent.list)))
-            Intent.AddNew -> dispatch(Result.NewState(getState().copy(newItem = Visible(""))))
-            is Intent.NewItemNameEnter -> dispatch(
-                Result.NewState(
-                    getState().copy(
-                        newItem = Visible(
-                            intent.name
-                        )
-                    )
-                )
-            )
+            is Intent.ListUpdate -> dispatchState(getState) {
+                copy(equipmentList = intent.list)
+            }
+            Intent.AddNew -> dispatchState(getState) {
+                copy(newItem = Visible(""))
+            }
+            is Intent.NewItemNameEnter -> dispatchState(getState) {
+                copy(newItem = Visible(intent.name))
+            }
             Intent.AddingItemConfirm -> {
                 insertEquipment((getState().newItem as Visible).text)
-                dispatch(
-                    Result.NewState(
-                        getState().copy(
-                            newItem = Hidden,
-                        )
-                    )
-                )
+                dispatchState(getState) { copy(newItem = Hidden) }
             }
-            Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(newItem = Hidden)))
+            Intent.AddingNewCancel -> dispatchState(getState) {
+                copy(newItem = Hidden)
+            }
             is Intent.ItemPacked -> setEquipmentPacked(intent.id, intent.isPacked)
         }
+
+        private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
+            dispatch(Result.NewState(getState().modifyState()))
     }
 
     private class ReducerImpl : Reducer<State, Result> {
