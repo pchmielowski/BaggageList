@@ -97,6 +97,10 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
                 viewModel.onDeleteClick()
                 true
             }
+            R.id.menuItemCancelDeleting -> {
+                viewModel.onCancelDeletingClick()
+                true
+            }
             else -> false
         }
     }
