@@ -48,6 +48,23 @@ internal class EquipmentListViewModelTest {
         }
 
         @Nested
+        inner class `on cancelled` {
+
+            init {
+                viewModel.onCancelAddingClick()
+            }
+
+            @Test
+            internal fun `input is not visible`() {
+                runBlockingTest {
+                    val model = viewModel.observeModel().first()
+                    assertThat(model)
+                        .matches { !it.isInputVisible }
+                }
+            }
+        }
+
+        @Nested
         inner class `on item name entered and confirmed adding` {
 
             init {

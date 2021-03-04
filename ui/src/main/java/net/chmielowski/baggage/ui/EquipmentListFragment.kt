@@ -58,6 +58,9 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         confirmAdding.setOnClickListener {
             viewModel.onAddingNewItemConfirm()
         }
+        cancel.setOnClickListener {
+            viewModel.onCancelAddingClick()
+        }
     }
 }
 
@@ -103,6 +106,8 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
     fun onAddingNewItemConfirm() = store.accept(Intent.AddingItemConfirm)
 
+    fun onCancelAddingClick() = store.accept(Intent.AddingNewCancel)
+
     fun observeModel(): Flow<Model> = store.states
 
     fun observeLabels() = store.labels
@@ -113,6 +118,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         object AddNew : Intent()
         data class NewItemNameEnter(val name: String) : Intent()
         object AddingItemConfirm : Intent()
+        object AddingNewCancel : Intent()
     }
 
     private sealed class Result {
@@ -141,7 +147,8 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         val items: List<EquipmentItem>
     }
 
-    private inner class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>(viewModelScope.coroutineContext) {
+    private inner class Executor :
+        SuspendExecutor<Intent, Nothing, State, Result, Label>(viewModelScope.coroutineContext) {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             is Intent.ListUpdate -> dispatch(Result.NewState(getState().copy(equipmentList = intent.list)))
@@ -158,6 +165,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
                     )
                 )
             }
+            Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
         }
     }
 
