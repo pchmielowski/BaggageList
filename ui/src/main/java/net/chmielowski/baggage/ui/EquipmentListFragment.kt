@@ -1,7 +1,12 @@
 package net.chmielowski.baggage.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.OvershootInterpolator
+import android.view.animation.Transformation
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -40,7 +45,14 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     ) {
         adapter.submitList(model.items)
         addNew.isVisible = model.isAddNewVisible
-        progress.progressIndicator.progress = model.progress
+        val animation = ProgressBarAnimation(
+            progress.progressIndicator,
+            model.progress
+        )
+        animation.duration = 100
+        animation.interpolator = OvershootInterpolator()
+        progress.progressIndicator.startAnimation(animation)
+
         progress.progressMessage.text =
             requireContext().getString(R.string.label_packing_progress, model.progress)
     }
@@ -75,3 +87,17 @@ fun TextView.doOnTextChanged(action: (text: String) -> Unit) =
     doOnTextChanged { text, _, _, _ ->
         action(text!!.toString())
     }
+
+class ProgressBarAnimation(
+    private val progressBar: ProgressBar,
+    private val to: Int
+) : Animation() {
+
+    private val from = progressBar.progress
+
+    override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
+        val value = from + (to - from) * interpolatedTime
+        Log.d("pchm", "applyTransformation $value")
+        progressBar.progress = value.toInt()
+    }
+}
