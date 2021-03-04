@@ -20,13 +20,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
+    private val viewModel by viewModel<EquipmentListViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val viewModel by viewModel<EquipmentListViewModel>()
         val binding = ScreenEquipmentListBinding.bind(view)
         val addNewBinding = ViewAddEquipmentBinding.bind(view)
         val adapter = EquipmentAdapter(
@@ -93,6 +94,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menuItemDelete -> {
+                viewModel.onDeleteClick()
                 true
             }
             else -> false
