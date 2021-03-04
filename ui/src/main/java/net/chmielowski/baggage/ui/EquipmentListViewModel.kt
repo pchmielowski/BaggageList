@@ -54,11 +54,9 @@ class EquipmentListViewModel(
     fun onItemPackedToggle(id: EquipmentId, isPacked: Boolean) =
         store.accept(Intent.ItemPacked(id, isPacked))
 
+    fun onDeleteClick() = store.accept(Intent.DeleteClick)
+
     fun observeModel(): Flow<Model> = store.states
-
-    fun onDeleteClick() {
-
-    }
 
     sealed class Intent {
         data class ListUpdate(val list: List<EquipmentDto>) : Intent()
@@ -67,6 +65,7 @@ class EquipmentListViewModel(
         data class NewItemNameEnter(val name: String) : Intent()
         object AddingItemConfirm : Intent()
         object AddingNewCancel : Intent()
+        object DeleteClick : Intent()
 
         data class ItemPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
     }
@@ -79,7 +78,7 @@ class EquipmentListViewModel(
 
     private data class State(
         val newItem: NewItemInput = Hidden,
-
+        val isDeleteMode: Boolean = false,
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
 
@@ -97,7 +96,15 @@ class EquipmentListViewModel(
 
         override val isAddNewVisible get() = newItem is Hidden
 
-        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name, it.isPacked, true) } // TODO!
+        override val items
+            get() = equipmentList.map {
+                EquipmentItem(
+                    it.id,
+                    it.name,
+                    it.isPacked,
+                    isDeleteMode,
+                )
+            }
 
         sealed class NewItemInput {
             object Hidden : NewItemInput()
@@ -133,6 +140,9 @@ class EquipmentListViewModel(
                 copy(newItem = Hidden)
             }
             is Intent.ItemPacked -> setEquipmentPacked(intent.id, intent.isPacked)
+            Intent.DeleteClick -> dispatchState(getState) {
+                copy(isDeleteMode = true)
+            }
         }
 
         private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
