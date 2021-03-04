@@ -36,6 +36,13 @@
 
     <include layout="@layout/view_add_equipment" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="confirmAdding, progressLayout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -44,7 +51,7 @@
         android:paddingVertical="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progressLayout" />
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addNew"
