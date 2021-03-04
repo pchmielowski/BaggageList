@@ -28,7 +28,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         val viewModel by viewModel<EquipmentListViewModel>()
         val binding = ScreenEquipmentListBinding.bind(view)
         val adapter = EquipmentAdapter(
-            onItemClicked = { id -> viewModel.onItemPackedToggle(id, true) },
+            onItemToggled = { id, isToggled -> viewModel.onItemPackedToggle(id, isToggled) },
         )
         binding.list.adapter = adapter
 

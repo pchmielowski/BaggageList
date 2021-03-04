@@ -8,15 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import net.chmielowski.baggage.ui.databinding.ItemEquipmentBinding
 
 class EquipmentAdapter(
-    private val onItemClicked: (EquipmentId) -> Unit,
+    private val onItemToggled: (EquipmentId, isChecked: Boolean) -> Unit,
 ) : ListAdapter<EquipmentItem, EquipmentAdapter.ViewHolder>(Callback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemEquipmentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = ViewHolder(binding)
-        binding.name.setOnCheckedChangeListener { _, _ ->
-            onItemClicked(getItem(holder.adapterPosition).id)
+        binding.name.setOnCheckedChangeListener { _, isChecked ->
+            onItemToggled(getItem(holder.adapterPosition).id, isChecked)
         }
         return holder
     }
