@@ -2,6 +2,7 @@ package net.chmielowski.baggage.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +31,18 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
                 adapter.submitList(model.items)
+
+                // TODO: Group
+                binding.newItemNameLayout.isVisible = model.isInputVisible
+                binding.cancel.isVisible = model.isInputVisible
+                binding.confirmAdding.isVisible = model.isInputVisible
+
+                binding.addNew.isVisible = model.isAddNewVisible
             }
+        }
+
+        binding.addNew.setOnClickListener {
+            viewModel.onAddItemClick()
         }
     }
 }
@@ -98,11 +110,14 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
         override val isInputVisible get() = isAddingNew
 
+        override val isAddNewVisible get() = !isAddingNew
+
         override val items get() = equipmentList.map { EquipmentItem(it.id, it.name) }
     }
 
     interface Model {
         val isInputVisible: Boolean
+        val isAddNewVisible: Boolean
         val items: List<EquipmentItem>
     }
 
