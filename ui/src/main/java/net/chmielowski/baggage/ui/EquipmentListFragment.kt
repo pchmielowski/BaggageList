@@ -1,6 +1,9 @@
 package net.chmielowski.baggage.ui
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Transformation
@@ -16,6 +19,11 @@ import net.chmielowski.baggage.ui.databinding.ViewAddEquipmentBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModel by viewModel<EquipmentListViewModel>()
@@ -75,6 +83,19 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         }
         cancel.setOnClickListener {
             viewModel.onCancelAddingClick()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_equipment, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menuItemDelete -> {
+                true
+            }
+            else -> false
         }
     }
 }

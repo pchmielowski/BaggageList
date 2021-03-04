@@ -7,4 +7,5 @@
     <string name="action_confirm">Confirm</string>
     <string name="action_cancel">Cancel</string>
     <string name="label_packing_progress">Packing progress: %d%%</string>
+    <string name="action_delete">Delete</string>
 </resources>
