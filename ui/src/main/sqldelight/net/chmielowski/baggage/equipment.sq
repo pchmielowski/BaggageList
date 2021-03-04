@@ -1,8 +1,10 @@
+import java.lang.Boolean;
 import net.chmielowski.baggage.ui.EquipmentId;
 
 CREATE TABLE equipment (
     id INTEGER AS EquipmentId PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    isPacked INTEGER AS Boolean NOT NULL
 );
 
 selectEquipments:
@@ -11,6 +13,12 @@ FROM equipment
 ;
 
 insertEquimpent:
-INSERT INTO equipment (name)
-VALUES (?)
+INSERT INTO equipment (name, isPacked)
+VALUES (?, 0)
+;
+
+setEquipmentPacked:
+UPDATE equipment
+SET isPacked = 1
+WHERE id = ?
 ;

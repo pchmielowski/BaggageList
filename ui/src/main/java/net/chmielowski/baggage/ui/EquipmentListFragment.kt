@@ -109,6 +109,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     fun onCancelAddingClick() = store.accept(Intent.AddingNewCancel)
 
     fun onItemClick(id: EquipmentId) {
+        store.accept(Intent.ItemPacked(id))
     }
 
     fun observeModel(): Flow<Model> = store.states
@@ -122,6 +123,8 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         data class NewItemNameEnter(val name: String) : Intent()
         object AddingItemConfirm : Intent()
         object AddingNewCancel : Intent()
+
+        data class ItemPacked(val id: EquipmentId) : Intent()
     }
 
     private sealed class Result {
@@ -141,7 +144,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
         override val isAddNewVisible get() = !isAddingNew
 
-        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name) }
+        override val items get() = equipmentList.map { EquipmentItem(it.id, it.name, it.isPacked) }
     }
 
     interface Model {
@@ -169,6 +172,10 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
                 )
             }
             Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
+            is Intent.ItemPacked -> {
+                // TODO: Class
+                database.equipmentQueries.setEquipmentPacked(intent.id)
+            }
         }
     }
 
@@ -185,4 +192,5 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 data class EquipmentDto(
     val id: EquipmentId,
     val name: String,
+    val isPacked: Boolean,
 )
