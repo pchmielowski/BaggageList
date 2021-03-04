@@ -31,12 +31,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
                 adapter.submitList(model.items)
-
-                // TODO: Group
-                binding.newItemNameLayout.isVisible = model.isInputVisible
-                binding.cancel.isVisible = model.isInputVisible
-                binding.confirmAdding.isVisible = model.isInputVisible
-
+                binding.addNewInputGroup.isVisible = model.isInputVisible
                 binding.addNew.isVisible = model.isAddNewVisible
             }
         }
