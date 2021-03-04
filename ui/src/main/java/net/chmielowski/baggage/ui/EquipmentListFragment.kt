@@ -40,8 +40,8 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     ) {
         adapter.submitList(model.items)
         addNew.isVisible = model.isAddNewVisible
-        progressIndicator.progress = model.progress
-        progressMessage.text =
+        progress.progressIndicator.progress = model.progress
+        progress.progressMessage.text =
             requireContext().getString(R.string.label_packing_progress, model.progress)
     }
 
@@ -72,6 +72,6 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
 // TODO: Move
 fun TextView.doOnTextChanged(action: (text: String) -> Unit) =
-    doOnTextChanged { text, start, before, count ->
+    doOnTextChanged { text, _, _, _ ->
         action(text!!.toString())
     }
