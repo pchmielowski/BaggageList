@@ -141,6 +141,20 @@ internal class EquipmentListViewModelTest {
             assertThat(currentModel().items)
                 .allMatch { it.isDeleteVisible }
         }
+
+        @Nested
+        inner class `on Cancel icon clicked` {
+
+            init {
+                viewModel.onCancelDeletingClick()
+            }
+
+            @Test
+            internal fun `delete buttons are not visible on any item`() = runBlockingTest {
+                assertThat(currentModel().items)
+                    .allMatch { !it.isDeleteVisible }
+            }
+        }
     }
 
     private suspend fun currentModel() = viewModel.observeModel().first()

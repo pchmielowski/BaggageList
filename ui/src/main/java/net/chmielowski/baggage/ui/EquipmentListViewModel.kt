@@ -56,8 +56,11 @@ class EquipmentListViewModel(
 
     fun onDeleteClick() = store.accept(Intent.DeleteClick)
 
+    fun onCancelDeletingClick() = store.accept(Intent.CancelDeletingClick)
+
     fun observeModel(): Flow<Model> = store.states
 
+    // TODO: Rename intents
     sealed class Intent {
         data class ListUpdate(val list: List<EquipmentDto>) : Intent()
 
@@ -66,6 +69,7 @@ class EquipmentListViewModel(
         object AddingItemConfirm : Intent()
         object AddingNewCancel : Intent()
         object DeleteClick : Intent()
+        object CancelDeletingClick : Intent()
 
         data class ItemPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
     }
@@ -142,6 +146,9 @@ class EquipmentListViewModel(
             is Intent.ItemPacked -> setEquipmentPacked(intent.id, intent.isPacked)
             Intent.DeleteClick -> dispatchState(getState) {
                 copy(isDeleteMode = true)
+            }
+            Intent.CancelDeletingClick -> dispatchState(getState) {
+                copy(isDeleteMode = false)
             }
         }
 
