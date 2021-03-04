@@ -11,6 +11,8 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Hidden
+import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Visible
 import kotlin.math.roundToInt
 
 class EquipmentListViewModel(private val database: Database) : ViewModel() {
@@ -73,8 +75,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     sealed class Label
 
     private data class State(
-        val newItemName: String = "",
-        val isAddingNew: Boolean = false,
+        val newItem: NewItemInput = Hidden,
 
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
@@ -86,11 +87,16 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
                 return (packed / all * 100).roundToInt()
             }
 
-        override val isInputVisible get() = isAddingNew
+        override val isInputVisible get() = newItem is Visible
 
-        override val isAddNewVisible get() = !isAddingNew
+        override val isAddNewVisible get() = newItem is Hidden
 
         override val items get() = equipmentList.map { EquipmentItem(it.id, it.name, it.isPacked) }
+
+        sealed class NewItemInput {
+            object Hidden : NewItemInput()
+            data class Visible(val text: String) : NewItemInput()
+        }
     }
 
     interface Model {
@@ -105,20 +111,28 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             is Intent.ListUpdate -> dispatch(Result.NewState(getState().copy(equipmentList = intent.list)))
-            Intent.AddNew -> dispatch(Result.NewState(getState().copy(isAddingNew = true)))
-            is Intent.NewItemNameEnter -> dispatch(Result.NewState(getState().copy(newItemName = intent.name)))
+            Intent.AddNew -> dispatch(Result.NewState(getState().copy(newItem = Visible(""))))
+            is Intent.NewItemNameEnter -> dispatch(
+                Result.NewState(
+                    getState().copy(
+                        newItem = Visible(
+                            intent.name
+                        )
+                    )
+                )
+            )
             Intent.AddingItemConfirm -> {
                 // TODO: Class
-                database.equipmentQueries.insertEquimpent(getState().newItemName)
+                database.equipmentQueries.insertEquimpent((getState().newItem as Visible).text)
                 dispatch(
                     Result.NewState(
                         getState().copy(
-                            isAddingNew = false,
+                            newItem = Hidden,
                         )
                     )
                 )
             }
-            Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(isAddingNew = false)))
+            Intent.AddingNewCancel -> dispatch(Result.NewState(getState().copy(newItem = Hidden)))
             is Intent.ItemPacked -> {
                 // TODO: Class
                 database.equipmentQueries.setEquipmentPacked(intent.id, intent.isPacked)
