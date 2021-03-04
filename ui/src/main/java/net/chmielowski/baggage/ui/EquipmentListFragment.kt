@@ -2,7 +2,9 @@ package net.chmielowski.baggage.ui
 
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
@@ -39,8 +41,20 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         binding.addNew.setOnClickListener {
             viewModel.onAddItemClick()
         }
+        binding.newItemName.doOnTextChanged { text ->
+            viewModel.onNewItemNameEnter(text)
+        }
+        binding.confirmAdding.setOnClickListener {
+            viewModel.onAddingNewItemConfirm()
+        }
     }
 }
+
+// TODO: Move
+fun TextView.doOnTextChanged(action: (text: String) -> Unit) =
+    doOnTextChanged { text, start, before, count ->
+        action(text!!.toString())
+    }
 
 // TODO: Move
 class EquipmentListViewModel(private val database: Database) : ViewModel() {
