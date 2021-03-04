@@ -26,6 +26,7 @@ class EquipmentAdapter(
         val binding = holder.binding
 
         binding.name.text = item.name
+        binding.name.isChecked = item.isChecked
     }
 
     class ViewHolder(val binding: ItemEquipmentBinding) :
