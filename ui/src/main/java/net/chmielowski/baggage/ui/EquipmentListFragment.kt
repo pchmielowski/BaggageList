@@ -1,7 +1,6 @@
 package net.chmielowski.baggage.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.OvershootInterpolator
@@ -97,7 +96,6 @@ class ProgressBarAnimation(
 
     override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
         val value = from + (to - from) * interpolatedTime
-        Log.d("pchm", "applyTransformation $value")
         progressBar.progress = value.toInt()
     }
 }
