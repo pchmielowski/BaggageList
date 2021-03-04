@@ -11,6 +11,7 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
@@ -78,7 +79,12 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
 
-        override val progress get() = 100
+        override val progress: Int
+            get() {
+                val packed = equipmentList.count { it.isPacked }.toFloat()
+                val all = equipmentList.size.toFloat()
+                return (packed / all * 100).roundToInt()
+            }
 
         override val isInputVisible get() = isAddingNew
 
