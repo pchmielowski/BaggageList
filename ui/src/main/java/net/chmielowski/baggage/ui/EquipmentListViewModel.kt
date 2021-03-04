@@ -78,6 +78,8 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         val equipmentList: List<EquipmentDto> = emptyList(),
     ) : Model {
 
+        override val progress get() = 100
+
         override val isInputVisible get() = isAddingNew
 
         override val isAddNewVisible get() = !isAddingNew
@@ -86,6 +88,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     }
 
     interface Model {
+        val progress: Int
         val isInputVisible: Boolean
         val isAddNewVisible: Boolean
         val items: List<EquipmentItem>

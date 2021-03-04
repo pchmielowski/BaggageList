@@ -104,6 +104,12 @@ internal class EquipmentListViewModelTest {
                 .matches { it.isChecked }
         }
 
+        @Test
+        internal fun `progress is set to 100`() = runBlockingTest {
+            assertThat(currentModel())
+                .matches { it.progress == 100 }
+        }
+
         @Nested
         inner class `on checked as not packed` {
 
