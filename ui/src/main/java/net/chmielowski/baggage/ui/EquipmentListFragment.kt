@@ -32,19 +32,30 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
-                adapter.submitList(model.items)
-                binding.addNewInputGroup.isVisible = model.isInputVisible
-                binding.addNew.isVisible = model.isAddNewVisible
+                binding.render(adapter, model)
             }
         }
 
-        binding.addNew.setOnClickListener {
+        binding.bindListeners(viewModel)
+    }
+
+    private fun ScreenEquipmentListBinding.render(
+        adapter: EquipmentAdapter,
+        model: EquipmentListViewModel.Model,
+    ) {
+        adapter.submitList(model.items)
+        addNewInputGroup.isVisible = model.isInputVisible
+        addNew.isVisible = model.isAddNewVisible
+    }
+
+    private fun ScreenEquipmentListBinding.bindListeners(viewModel: EquipmentListViewModel) {
+        addNew.setOnClickListener {
             viewModel.onAddItemClick()
         }
-        binding.newItemName.doOnTextChanged { text ->
+        newItemName.doOnTextChanged { text ->
             viewModel.onNewItemNameEnter(text)
         }
-        binding.confirmAdding.setOnClickListener {
+        confirmAdding.setOnClickListener {
             viewModel.onAddingNewItemConfirm()
         }
     }
