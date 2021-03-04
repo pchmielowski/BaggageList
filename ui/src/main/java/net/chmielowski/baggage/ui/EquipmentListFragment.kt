@@ -25,10 +25,12 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         val adapter = EquipmentAdapter()
         binding.list.adapter = adapter
 
+        // TODO: Use real data
         adapter.submitList((1..30).map { EquipmentItem(EquipmentId(it.toLong()), "Item $it") })
     }
 }
 
+// TODO: Move
 class EquipmentListViewModel(private val database: Database) : ViewModel() {
 
     private val storeFactory = DefaultStoreFactory
@@ -50,6 +52,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         }
     }
 
+    // TODO: Class
     private fun observeEquipmentList() = database.equipmentQueries
         .selectEquipments(::EquipmentDto)
         .asFlow()
@@ -105,6 +108,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
             Intent.AddNew -> dispatch(Result.NewState(getState().copy(isAddingNew = true)))
             is Intent.NewItemNameEnter -> dispatch(Result.NewState(getState().copy(newItemName = intent.name)))
             Intent.AddingItemConfirm -> {
+                // TODO: Class
                 database.equipmentQueries.insertEquimpent(getState().newItemName)
                 dispatch(
                     Result.NewState(

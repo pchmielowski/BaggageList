@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
+// TODO: Move
 private class SimpleAdapter<T : Any, S>(
     private val decoder: (S) -> T,
     private val encoder: (T) -> S
@@ -24,13 +25,13 @@ private class SimpleAdapter<T : Any, S>(
     override fun encode(value: T) = encoder(value)
 }
 
-
 @Suppress("ClassName")
 internal class EquipmentListViewModelTest {
 
     private val dispatcher = TestCoroutineDispatcher()
 
     init {
+        // TODO: Rule
         Dispatchers.setMain(dispatcher)
         isAssertOnMainThreadEnabled = false
     }
