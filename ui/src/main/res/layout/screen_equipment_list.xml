@@ -24,6 +24,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:id="@+id/cancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/action_cancel"
+        app:layout_constraintBaseline_toBaselineOf="@id/confirmAdding"
+        app:layout_constraintEnd_toStartOf="@id/confirmAdding" />
+
+    <Button
         android:id="@+id/confirmAdding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
