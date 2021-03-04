@@ -93,7 +93,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
     private fun observeEquipmentList() = database.equipmentQueries
         .selectEquipments(::EquipmentDto)
         .asFlow()
-        .mapToList()
+        .mapToList(viewModelScope.coroutineContext)
 
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
@@ -141,7 +141,7 @@ class EquipmentListViewModel(private val database: Database) : ViewModel() {
         val items: List<EquipmentItem>
     }
 
-    private inner class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>() {
+    private inner class Executor : SuspendExecutor<Intent, Nothing, State, Result, Label>(viewModelScope.coroutineContext) {
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             is Intent.ListUpdate -> dispatch(Result.NewState(getState().copy(equipmentList = intent.list)))
