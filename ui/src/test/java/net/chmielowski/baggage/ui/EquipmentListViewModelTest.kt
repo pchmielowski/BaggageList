@@ -15,14 +15,10 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 // TODO: Move
-private class SimpleAdapter<T : Any, S>(
-    private val decoder: (S) -> T,
-    private val encoder: (T) -> S
-) : ColumnAdapter<T, S> {
-
-    override fun decode(databaseValue: S) = decoder(databaseValue)
-
-    override fun encode(value: T) = encoder(value)
+private fun createTestDatabase(): Database {
+    val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+    Database.Schema.create(driver)
+    return createDatabase(driver)
 }
 
 @Suppress("ClassName")
@@ -34,17 +30,6 @@ internal class EquipmentListViewModelTest {
         // TODO: Rule
         Dispatchers.setMain(dispatcher)
         isAssertOnMainThreadEnabled = false
-    }
-
-    private fun createTestDatabase(): Database {
-        val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-        Database.Schema.create(driver)
-        return Database(
-            driver,
-            Equipment.Adapter(
-                SimpleAdapter(::EquipmentId, EquipmentId::value),
-            )
-        )
     }
 
     private val viewModel = EquipmentListViewModel(

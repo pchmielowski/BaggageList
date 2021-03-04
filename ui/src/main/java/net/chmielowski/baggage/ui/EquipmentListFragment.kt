@@ -3,8 +3,8 @@ package net.chmielowski.baggage.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.extensions.coroutines.SuspendExecutor
@@ -17,16 +17,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.chmielowski.baggage.ui.databinding.ScreenEquipmentListBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val model by viewModels<EquipmentListViewModel>()
+        val viewModel by viewModel<EquipmentListViewModel>()
         val binding = ScreenEquipmentListBinding.bind(view)
         val adapter = EquipmentAdapter()
         binding.list.adapter = adapter
 
-        // TODO: Use real data
-        adapter.submitList((1..30).map { EquipmentItem(EquipmentId(it.toLong()), "Item $it") })
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.observeModel().collectLatest { model ->
+                adapter.submitList(model.items)
+            }
+        }
     }
 }
 
