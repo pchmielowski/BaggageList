@@ -20,6 +20,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
+    private var optionsMenu: Menu? = null
+
     private val viewModel by viewModel<EquipmentListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,8 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
                 binding.render(adapter, model)
+                optionsMenu!!.findItem(R.id.menuItemDelete).isVisible = model.isDeleteButtonVisible
+                optionsMenu!!.findItem(R.id.menuItemCancelDeleting).isVisible = model.isCancelDeletingVisible
                 addNewBinding.render(model)
             }
         }
@@ -89,6 +93,11 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_equipment, menu)
+        optionsMenu = menu
+    }
+
+    override fun onDestroyOptionsMenu() {
+        optionsMenu = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

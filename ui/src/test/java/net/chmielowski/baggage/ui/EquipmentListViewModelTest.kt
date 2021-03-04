@@ -142,6 +142,12 @@ internal class EquipmentListViewModelTest {
                 .allMatch { it.isDeleteVisible }
         }
 
+        @Test
+        internal fun `cancel deleting button is visible`() = runBlockingTest {
+            assertThat(currentModel())
+                .matches { it.isCancelDeletingVisible }
+        }
+
         @Nested
         inner class `on Cancel icon clicked` {
 
@@ -153,6 +159,12 @@ internal class EquipmentListViewModelTest {
             internal fun `delete buttons are not visible on any item`() = runBlockingTest {
                 assertThat(currentModel().items)
                     .allMatch { !it.isDeleteVisible }
+            }
+
+            @Test
+            internal fun `delete button is visible`() = runBlockingTest {
+                assertThat(currentModel())
+                    .matches { it.isDeleteButtonVisible }
             }
         }
     }

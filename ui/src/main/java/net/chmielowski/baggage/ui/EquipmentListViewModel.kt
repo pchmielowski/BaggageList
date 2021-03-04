@@ -110,6 +110,10 @@ class EquipmentListViewModel(
                 )
             }
 
+        override val isCancelDeletingVisible get() = isDeleteMode
+
+        override val isDeleteButtonVisible get() = !isDeleteMode
+
         sealed class NewItemInput {
             object Hidden : NewItemInput()
             data class Visible(val text: String) : NewItemInput()
@@ -121,6 +125,8 @@ class EquipmentListViewModel(
         val isInputVisible: Boolean
         val isAddNewVisible: Boolean
         val items: List<EquipmentItem>
+        val isCancelDeletingVisible: Boolean
+        val isDeleteButtonVisible: Boolean
     }
 
     private inner class Executor :
