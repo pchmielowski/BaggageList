@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.chmielowski.baggage.ui.databinding.ScreenEquipmentListBinding
+import net.chmielowski.baggage.ui.databinding.ViewAddEquipmentBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
@@ -27,6 +28,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModel by viewModel<EquipmentListViewModel>()
         val binding = ScreenEquipmentListBinding.bind(view)
+        val addNewBinding = ViewAddEquipmentBinding.bind(view)
         val adapter = EquipmentAdapter(
             onItemToggled = { id, isToggled -> viewModel.onItemPackedToggle(id, isToggled) },
         )
@@ -35,10 +37,12 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
                 binding.render(adapter, model)
+                addNewBinding.render(model)
             }
         }
 
         binding.bindListeners(viewModel)
+        addNewBinding.bindListeners(viewModel)
     }
 
     private fun ScreenEquipmentListBinding.render(
@@ -46,14 +50,22 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         model: EquipmentListViewModel.Model,
     ) {
         adapter.submitList(model.items)
-        addNewInputGroup.isVisible = model.isInputVisible
         addNew.isVisible = model.isAddNewVisible
+    }
+
+    private fun ViewAddEquipmentBinding.render(
+        model: EquipmentListViewModel.Model
+    ) {
+        addNewInputGroup.isVisible = model.isInputVisible
     }
 
     private fun ScreenEquipmentListBinding.bindListeners(viewModel: EquipmentListViewModel) {
         addNew.setOnClickListener {
             viewModel.onAddItemClick()
         }
+    }
+
+    private fun ViewAddEquipmentBinding.bindListeners(viewModel: EquipmentListViewModel) {
         newItemName.doOnTextChanged { text ->
             viewModel.onNewItemNameEnter(text)
         }
