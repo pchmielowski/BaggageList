@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
+import net.chmielowski.baggage.ui.EquipmentListViewModel.Label.ShowUndoSnackbar
 import net.chmielowski.baggage.ui.databinding.ScreenEquipmentListBinding
 import net.chmielowski.baggage.ui.databinding.ViewAddEquipmentBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -48,16 +49,21 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
                 addNewBinding.render(model)
             }
         }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.observeLabels().collectLatest { label ->
+                when (label) {
+                    ShowUndoSnackbar -> Snackbar
+                        .make(view, R.string.message_item_deleted, LENGTH_INDEFINITE)
+                        .setAction(R.string.action_undo) {
+                            Log.d("pchm", "Undo")
+                        }
+                        .show()
+                }.let { }
+            }
+        }
 
         binding.bindListeners(viewModel)
         addNewBinding.bindListeners(viewModel)
-
-        Snackbar
-            .make(view, R.string.message_item_deleted, LENGTH_INDEFINITE)
-            .setAction(R.string.action_undo) {
-                Log.d("pchm", "Undo")
-            }
-            .show()
     }
 
     private fun ScreenEquipmentListBinding.render(

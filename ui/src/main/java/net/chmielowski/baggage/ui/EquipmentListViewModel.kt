@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.extensions.coroutines.SuspendExecutor
+import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.states
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.squareup.sqldelight.runtime.coroutines.asFlow
@@ -63,6 +64,8 @@ class EquipmentListViewModel(
 
     fun observeModel(): Flow<Model> = store.states
 
+    fun observeLabels() = store.labels
+
     // TODO: Rename intents
     sealed class Intent {
         data class ListUpdate(val list: List<EquipmentDto>) : Intent()
@@ -83,7 +86,9 @@ class EquipmentListViewModel(
         class NewState(val state: State) : Result()
     }
 
-    sealed class Label
+    sealed class Label {
+        object ShowUndoSnackbar : Label()
+    }
 
     private data class State(
         val newItem: NewItemInput = Hidden,
@@ -164,7 +169,10 @@ class EquipmentListViewModel(
             Intent.CancelDeletingClick -> dispatchState(getState) {
                 copy(isDeleteMode = false)
             }
-            is Intent.DeleteItem -> deleteEquipment(intent.id)
+            is Intent.DeleteItem -> {
+                deleteEquipment(intent.id)
+                publish(Label.ShowUndoSnackbar)
+            }
         }
 
         private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
