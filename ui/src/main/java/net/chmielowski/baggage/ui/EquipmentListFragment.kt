@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import net.chmielowski.baggage.ui.EquipmentListViewModel.Label.ShowUndoSnackbar
@@ -60,8 +60,8 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
     private fun ScreenEquipmentListBinding.consume(label: EquipmentListViewModel.Label) =
         when (label) {
-            ShowUndoSnackbar -> Snackbar
-                .make(root, R.string.message_item_deleted, LENGTH_INDEFINITE)
+            is ShowUndoSnackbar -> Snackbar
+                .make(root, getString(R.string.message_item_deleted, label.itemName), LENGTH_LONG)
                 .setAction(R.string.action_undo) {
                     viewModel.onUndoDeleteClick()
                 }

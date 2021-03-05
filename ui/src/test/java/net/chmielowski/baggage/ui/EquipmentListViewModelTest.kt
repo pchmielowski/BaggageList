@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
+import net.chmielowski.baggage.ui.EquipmentListViewModel.Label.ShowUndoSnackbar
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -161,6 +162,12 @@ internal class EquipmentListViewModelTest {
             internal fun `item is no longer present on the list`() = runBlockingTest {
                 assertThat(currentModel().items)
                     .noneMatch { it.id == dummyItemId }
+            }
+
+            @Test
+            internal fun `Undo message is displayed`() = runBlockingTest {
+                assertThat(lastLabel())
+                    .isEqualTo(ShowUndoSnackbar("Pants"))
             }
 
             @Nested

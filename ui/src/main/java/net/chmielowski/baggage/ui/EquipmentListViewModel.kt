@@ -12,7 +12,9 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Hidden
 import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Visible
@@ -37,6 +39,10 @@ class EquipmentListViewModel(
         bootstrapper = SimpleBootstrapper(Unit)
     )
 
+    // TODO: Event bus
+    private val labels = store.labels
+        .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+
     //region Callbacks
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
@@ -60,7 +66,7 @@ class EquipmentListViewModel(
 
     fun observeModel(): Flow<Model> = store.states
 
-    fun observeLabels() = store.labels
+    fun observeLabels(): Flow<Label> = labels
 
     // TODO: Rename intents
     sealed class Intent {
@@ -83,7 +89,7 @@ class EquipmentListViewModel(
     }
 
     sealed class Label {
-        object ShowUndoSnackbar : Label()
+        data class ShowUndoSnackbar(val itemName: String) : Label()
     }
 
     private data class State(
@@ -171,8 +177,9 @@ class EquipmentListViewModel(
             }
             is Intent.Delete -> {
                 dispatchState(getState) { copy(lastDeleted = intent.id) }
+                val lastDeletedName = getState().equipmentList.single { it.id == intent.id }.name
                 deleteEquipment(intent.id)
-                publish(Label.ShowUndoSnackbar)
+                publish(Label.ShowUndoSnackbar(lastDeletedName))
             }
             Intent.UndoDeleting -> undoDeleteEquipment(getState().lastDeleted!!)
         }

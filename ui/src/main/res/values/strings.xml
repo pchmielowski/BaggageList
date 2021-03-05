@@ -10,5 +10,5 @@
     <string name="action_undo">Undo</string>
     <string name="action_delete">Delete</string>
 
-    <string name="message_item_deleted">Item deleted</string>
+    <string name="message_item_deleted">%s deleted</string>
 </resources>
