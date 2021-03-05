@@ -35,9 +35,6 @@ class EquipmentListViewModel(
         reducer = ReducerImpl(),
     )
 
-    init {
-    }
-
     //region Callbacks
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
