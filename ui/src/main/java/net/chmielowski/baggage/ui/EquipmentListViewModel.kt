@@ -36,14 +36,9 @@ class EquipmentListViewModel(
     )
 
     init {
-        viewModelScope.launch {
-            observeEquipments()
-                .collectLatest { list ->
-                    store.accept(Intent.ListUpdate(list))
-                }
-        }
     }
 
+    //region Callbacks
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
     fun onNewItemNameEnter(name: String) = store.accept(Intent.SetNewItemName(name))
@@ -62,6 +57,7 @@ class EquipmentListViewModel(
     fun onCancelDeletingClick() = store.accept(Intent.ExitDeletingMode)
 
     fun onUndoDeleteClick() = store.accept(Intent.UndoDeleting)
+    //endregion
 
     fun observeModel(): Flow<Model> = store.states
 
@@ -69,8 +65,6 @@ class EquipmentListViewModel(
 
     // TODO: Rename intents
     sealed class Intent {
-        data class ListUpdate(val list: List<EquipmentDto>) : Intent()
-
         object AddNew : Intent()
         data class SetNewItemName(val name: String) : Intent()
         object ConfirmAddingNew : Intent()
@@ -85,7 +79,8 @@ class EquipmentListViewModel(
     }
 
     private sealed class Result {
-        class NewState(val state: State) : Result()
+        data class NewState(val state: State) : Result()
+        data class ListUpdate(val list: List<EquipmentDto>) : Result()
     }
 
     sealed class Label {
@@ -145,10 +140,16 @@ class EquipmentListViewModel(
     private inner class Executor :
         SuspendExecutor<Intent, Nothing, State, Result, Label>(viewModelScope.coroutineContext) {
 
-        override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
-            is Intent.ListUpdate -> dispatchState(getState) {
-                copy(equipmentList = intent.list)
+        init {
+            viewModelScope.launch {
+                observeEquipments()
+                    .collectLatest { list ->
+                        dispatch(Result.ListUpdate(list))
+                    }
             }
+        }
+
+        override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             Intent.AddNew -> dispatchState(getState) {
                 copy(newItem = Visible(""))
             }
@@ -186,6 +187,7 @@ class EquipmentListViewModel(
         override fun State.reduce(result: Result): State {
             return when (result) {
                 is Result.NewState -> result.state
+                is Result.ListUpdate -> copy(equipmentList = result.list)
             }
         }
     }
