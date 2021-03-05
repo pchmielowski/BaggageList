@@ -4,6 +4,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        local {
+            storeFile file('local.jks')
+            storePassword 'local123'
+            keyAlias 'Local'
+            keyPassword 'local123'
+        }
+    }
     compileSdkVersion sdk_version.max
     buildToolsVersion build_tools_version
     defaultConfig {
@@ -17,6 +25,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.local
         }
     }
     compileOptions {
