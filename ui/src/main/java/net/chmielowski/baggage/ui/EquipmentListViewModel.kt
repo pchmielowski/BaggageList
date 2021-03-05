@@ -46,22 +46,20 @@ class EquipmentListViewModel(
 
     fun onAddItemClick() = store.accept(Intent.AddNew)
 
-    fun onNewItemNameEnter(name: String) {
-        store.accept(Intent.NewItemNameEnter(name))
-    }
+    fun onNewItemNameEnter(name: String) = store.accept(Intent.SetNewItemName(name))
 
-    fun onAddingNewItemConfirm() = store.accept(Intent.AddingItemConfirm)
+    fun onAddingNewItemConfirm() = store.accept(Intent.ConfirmAddingNew)
 
-    fun onCancelAddingClick() = store.accept(Intent.AddingNewCancel)
+    fun onCancelAddingClick() = store.accept(Intent.CancelAddingNew)
 
     fun onItemPackedToggle(id: EquipmentId, isPacked: Boolean) =
-        store.accept(Intent.ItemPacked(id, isPacked))
+        store.accept(Intent.MarkPacked(id, isPacked))
 
-    fun onDeleteClick() = store.accept(Intent.DeleteClick)
+    fun onDeleteClick() = store.accept(Intent.EnterDeletingMode)
 
-    fun onDeleteItemClick(id: EquipmentId) = store.accept(Intent.DeleteItem(id))
+    fun onDeleteItemClick(id: EquipmentId) = store.accept(Intent.Delete(id))
 
-    fun onCancelDeletingClick() = store.accept(Intent.CancelDeletingClick)
+    fun onCancelDeletingClick() = store.accept(Intent.ExitDeletingMode)
 
     fun onUndoDeleteClick() = store.accept(Intent.UndoDeleting)
 
@@ -74,15 +72,15 @@ class EquipmentListViewModel(
         data class ListUpdate(val list: List<EquipmentDto>) : Intent()
 
         object AddNew : Intent()
-        data class NewItemNameEnter(val name: String) : Intent()
-        object AddingItemConfirm : Intent()
-        object AddingNewCancel : Intent()
-        object DeleteClick : Intent()
-        object CancelDeletingClick : Intent()
+        data class SetNewItemName(val name: String) : Intent()
+        object ConfirmAddingNew : Intent()
+        object CancelAddingNew : Intent()
 
-        data class ItemPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
+        data class MarkPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
 
-        data class DeleteItem(val id: EquipmentId) : Intent()
+        object EnterDeletingMode : Intent()
+        object ExitDeletingMode : Intent()
+        data class Delete(val id: EquipmentId) : Intent()
         object UndoDeleting : Intent()
     }
 
@@ -154,24 +152,24 @@ class EquipmentListViewModel(
             Intent.AddNew -> dispatchState(getState) {
                 copy(newItem = Visible(""))
             }
-            is Intent.NewItemNameEnter -> dispatchState(getState) {
+            is Intent.SetNewItemName -> dispatchState(getState) {
                 copy(newItem = Visible(intent.name))
             }
-            Intent.AddingItemConfirm -> {
+            Intent.ConfirmAddingNew -> {
                 insertEquipment((getState().newItem as Visible).text)
                 dispatchState(getState) { copy(newItem = Hidden) }
             }
-            Intent.AddingNewCancel -> dispatchState(getState) {
+            Intent.CancelAddingNew -> dispatchState(getState) {
                 copy(newItem = Hidden)
             }
-            is Intent.ItemPacked -> setEquipmentPacked(intent.id, intent.isPacked)
-            Intent.DeleteClick -> dispatchState(getState) {
+            is Intent.MarkPacked -> setEquipmentPacked(intent.id, intent.isPacked)
+            Intent.EnterDeletingMode -> dispatchState(getState) {
                 copy(isDeleteMode = true)
             }
-            Intent.CancelDeletingClick -> dispatchState(getState) {
+            Intent.ExitDeletingMode -> dispatchState(getState) {
                 copy(isDeleteMode = false)
             }
-            is Intent.DeleteItem -> {
+            is Intent.Delete -> {
                 dispatchState(getState) { copy(lastDeleted = intent.id) }
                 deleteEquipment(intent.id)
                 publish(Label.ShowUndoSnackbar)
