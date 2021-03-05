@@ -13,7 +13,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
@@ -40,9 +39,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
             onItemToggled = viewModel::onItemPackedToggle,
             onDeleteClicked = viewModel::onDeleteItemClick,
         )
-        adapter.setHasStableIds(true)
         binding.list.adapter = adapter
-//        (binding.list.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeModel().collectLatest { model ->
