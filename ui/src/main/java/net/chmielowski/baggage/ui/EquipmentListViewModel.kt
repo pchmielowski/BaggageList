@@ -3,6 +3,7 @@ package net.chmielowski.baggage.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkivanov.mvikotlin.core.store.Reducer
+import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.SuspendExecutor
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.states
@@ -33,6 +34,7 @@ class EquipmentListViewModel(
         initialState = State(),
         executorFactory = { Executor() },
         reducer = ReducerImpl(),
+        bootstrapper = SimpleBootstrapper(Unit)
     )
 
     //region Callbacks
@@ -135,9 +137,9 @@ class EquipmentListViewModel(
     }
 
     private inner class Executor :
-        SuspendExecutor<Intent, Nothing, State, Result, Label>(viewModelScope.coroutineContext) {
+        SuspendExecutor<Intent, Unit, State, Result, Label>(viewModelScope.coroutineContext) {
 
-        init {
+        override suspend fun executeAction(action: Unit, getState: () -> State) {
             viewModelScope.launch {
                 observeEquipments()
                     .collectLatest { list ->
