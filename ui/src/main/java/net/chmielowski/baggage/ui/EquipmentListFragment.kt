@@ -1,7 +1,6 @@
 package net.chmielowski.baggage.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -51,20 +50,23 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.observeLabels().collectLatest { label ->
-                when (label) {
-                    ShowUndoSnackbar -> Snackbar
-                        .make(view, R.string.message_item_deleted, LENGTH_INDEFINITE)
-                        .setAction(R.string.action_undo) {
-                            viewModel.onUndoDeleteClick()
-                        }
-                        .show()
-                }.let { }
+                binding.consume(label)
             }
         }
 
         binding.bindListeners(viewModel)
         addNewBinding.bindListeners(viewModel)
     }
+
+    private fun ScreenEquipmentListBinding.consume(label: EquipmentListViewModel.Label) =
+        when (label) {
+            ShowUndoSnackbar -> Snackbar
+                .make(root, R.string.message_item_deleted, LENGTH_INDEFINITE)
+                .setAction(R.string.action_undo) {
+                    viewModel.onUndoDeleteClick()
+                }
+                .show()
+        }
 
     private fun ScreenEquipmentListBinding.render(
         adapter: EquipmentAdapter,
