@@ -159,7 +159,11 @@ class EquipmentListViewModel(
                 copy(newItem = Visible(""))
             }
             is Intent.SetNewItemName -> dispatchState(getState) {
-                copy(newItem = Visible(intent.name))
+                if (newItem is Visible) {
+                    copy(newItem = Visible(intent.name))
+                } else {
+                    this
+                }
             }
             Intent.ConfirmAddingNew -> {
                 insertEquipment((getState().newItem as Visible).text)
