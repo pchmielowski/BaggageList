@@ -226,7 +226,7 @@ class DatabaseExecutor(
 class InsertObject(private val executor: DatabaseExecutor) {
 
     suspend operator fun invoke(name: String) =
-        executor.execute { objectQueries.insertEquimpent(name) }
+        executor.execute { objectQueries.insertObject(name) }
 }
 
 // TODO: Move

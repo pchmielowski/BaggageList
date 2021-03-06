@@ -14,7 +14,7 @@ FROM object
 WHERE isDeleted = 0
 ;
 
-insertEquimpent:
+insertObject:
 INSERT INTO object (name, isPacked, isDeleted)
 VALUES (?, 0, 0)
 ;
