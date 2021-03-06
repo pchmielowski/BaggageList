@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Hidden
 import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Visible
 import kotlin.coroutines.CoroutineContext
@@ -211,38 +212,40 @@ class ObserveEquipments(
         .mapToList(context)
 }
 
-// TODO: Move
-class InsertEquipment(private val database: Database) {
+class DatabaseExecutor(
+    private val database: Database,
+    private val context: CoroutineContext = Dispatchers.IO,
+) {
 
-    // TODO: Dispatcher
-    operator fun invoke(name: String) {
-        database.equipmentQueries.insertEquimpent(name)
+    suspend fun <T> execute(action: Database.() -> T) = withContext(context) {
+        database.action()
     }
 }
 
 // TODO: Move
-class SetEquipmentPacked(private val database: Database) {
+class InsertEquipment(private val executor: DatabaseExecutor) {
 
-    // TODO: Dispatcher
-    operator fun invoke(id: EquipmentId, isPacked: Boolean) {
-        database.equipmentQueries.setEquipmentPacked(id, isPacked)
-    }
+    suspend operator fun invoke(name: String) =
+        executor.execute { equipmentQueries.insertEquimpent(name) }
 }
 
 // TODO: Move
-class DeleteEquipment(private val database: Database) {
+class SetEquipmentPacked(private val executor: DatabaseExecutor) {
 
-    // TODO: Dispatcher
-    operator fun invoke(id: EquipmentId) {
-        database.equipmentQueries.deleteEquipment(id)
-    }
+    suspend operator fun invoke(id: EquipmentId, isPacked: Boolean) =
+        executor.execute { equipmentQueries.setEquipmentPacked(id, isPacked) }
 }
 
 // TODO: Move
-class UndoDeleteEquipment(private val database: Database) {
+class DeleteEquipment(private val executor: DatabaseExecutor) {
 
-    // TODO: Dispatcher
-    operator fun invoke(id: EquipmentId) {
-        database.equipmentQueries.undoDeleteEquipment(id)
-    }
+    suspend operator fun invoke(id: EquipmentId) =
+        executor.execute { equipmentQueries.deleteEquipment(id) }
+}
+
+// TODO: Move
+class UndoDeleteEquipment(private val executor: DatabaseExecutor) {
+
+    suspend operator fun invoke(id: EquipmentId) =
+        executor.execute { equipmentQueries.undoDeleteEquipment(id) }
 }

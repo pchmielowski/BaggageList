@@ -33,12 +33,14 @@ internal class EquipmentListViewModelTest {
     private val database = createTestDatabase()
         .apply { addDummyItem() }
 
+    private val executor = DatabaseExecutor(database, dispatcher)
+
     private val viewModel = EquipmentListViewModel(
         ObserveEquipments(database, dispatcher),
-        InsertEquipment(database),
-        SetEquipmentPacked(database),
-        DeleteEquipment(database),
-        UndoDeleteEquipment(database),
+        InsertEquipment(executor),
+        SetEquipmentPacked(executor),
+        DeleteEquipment(executor),
+        UndoDeleteEquipment(executor),
     )
 
     private val dummyItemId = database.equipmentQueries.selectEquipments()
