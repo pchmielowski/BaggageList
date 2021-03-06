@@ -84,7 +84,7 @@ class EquipmentListViewModel(
     }
 
     private sealed class Result {
-        data class StateChange(val update: State.() -> State) : Result()
+        data class StateUpdate(val update: State.() -> State) : Result()
         data class ListUpdate(val list: List<EquipmentDto>) : Result()
     }
 
@@ -155,10 +155,10 @@ class EquipmentListViewModel(
         }
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
-            Intent.AddNew -> dispatchState {
+            Intent.AddNew -> updateState {
                 copy(newItem = Visible(""))
             }
-            is Intent.SetNewItemName -> dispatchState {
+            is Intent.SetNewItemName -> updateState {
                 if (newItem is Visible) {
                     copy(newItem = Visible(intent.name))
                 } else {
@@ -167,20 +167,20 @@ class EquipmentListViewModel(
             }
             Intent.ConfirmAddingNew -> {
                 insertEquipment((getState().newItem as Visible).text)
-                dispatchState { copy(newItem = Hidden) }
+                updateState { copy(newItem = Hidden) }
             }
-            Intent.CancelAddingNew -> dispatchState {
+            Intent.CancelAddingNew -> updateState {
                 copy(newItem = Hidden)
             }
             is Intent.MarkPacked -> setEquipmentPacked(intent.id, intent.isPacked)
-            Intent.EnterDeletingMode -> dispatchState {
+            Intent.EnterDeletingMode -> updateState {
                 copy(isDeleteMode = true)
             }
-            Intent.ExitDeletingMode -> dispatchState {
+            Intent.ExitDeletingMode -> updateState {
                 copy(isDeleteMode = false)
             }
             is Intent.Delete -> {
-                dispatchState { copy(lastDeleted = intent.id) }
+                updateState { copy(lastDeleted = intent.id) }
                 val lastDeletedName = getState().equipmentList.single { it.id == intent.id }.name
                 deleteEquipment(intent.id)
                 publish(Label.ShowUndoSnackbar(lastDeletedName))
@@ -188,15 +188,15 @@ class EquipmentListViewModel(
             Intent.UndoDeleting -> undoDeleteEquipment(getState().lastDeleted!!)
         }
 
-        private fun dispatchState(modifyState: State.() -> State) =
-            dispatch(Result.StateChange(modifyState))
+        private fun updateState(update: State.() -> State) =
+            dispatch(Result.StateUpdate(update))
     }
 
     private class ReducerImpl : Reducer<State, Result> {
 
         override fun State.reduce(result: Result): State {
             return when (result) {
-                is Result.StateChange -> result.update(this)
+                is Result.StateUpdate -> result.update(this)
                 is Result.ListUpdate -> copy(equipmentList = result.list)
             }
         }
