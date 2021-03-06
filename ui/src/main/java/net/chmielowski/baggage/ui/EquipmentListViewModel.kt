@@ -84,7 +84,7 @@ class EquipmentListViewModel(
     }
 
     private sealed class Result {
-        data class StateChange(val state: State.() -> State) : Result()
+        data class StateChange(val update: State.() -> State) : Result()
         data class ListUpdate(val list: List<EquipmentDto>) : Result()
     }
 
@@ -196,7 +196,7 @@ class EquipmentListViewModel(
 
         override fun State.reduce(result: Result): State {
             return when (result) {
-                is Result.StateChange -> result.state(this)
+                is Result.StateChange -> result.update(this)
                 is Result.ListUpdate -> copy(equipmentList = result.list)
             }
         }
