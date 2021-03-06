@@ -1,4 +1,4 @@
-package net.chmielowski.baggage.ui
+package net.chmielowski.baggage.`object`
 
 data class ObjectItem(
     val id: ObjectId,

@@ -1,4 +1,4 @@
-package net.chmielowski.baggage.ui
+package net.chmielowski.baggage.`object`
 
 import android.os.Bundle
 import android.view.Menu
@@ -16,7 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
-import net.chmielowski.baggage.ui.ObjectListViewModel.Label.ShowUndoSnackbar
+import net.chmielowski.baggage.`object`.ObjectListViewModel.Label.ShowUndoSnackbar
+import net.chmielowski.baggage.ui.R
 import net.chmielowski.baggage.ui.databinding.ScreenObjectsListBinding
 import net.chmielowski.baggage.ui.databinding.ViewAddObjectBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel

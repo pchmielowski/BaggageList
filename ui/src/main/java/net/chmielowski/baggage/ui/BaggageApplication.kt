@@ -5,6 +5,14 @@ import com.squareup.sqldelight.ColumnAdapter
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import net.chmielowski.baggage.Object_
+import net.chmielowski.baggage.`object`.DatabaseExecutor
+import net.chmielowski.baggage.`object`.DeleteObject
+import net.chmielowski.baggage.`object`.InsertObject
+import net.chmielowski.baggage.`object`.ObjectId
+import net.chmielowski.baggage.`object`.ObjectListViewModel
+import net.chmielowski.baggage.`object`.ObserveObjects
+import net.chmielowski.baggage.`object`.SetObjectPacked
+import net.chmielowski.baggage.`object`.UndoDeleteObject
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin

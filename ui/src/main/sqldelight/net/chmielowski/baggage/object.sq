@@ -1,5 +1,5 @@
 import java.lang.Boolean;
-import net.chmielowski.baggage.ui.ObjectId;
+import net.chmielowski.baggage.object.ObjectId;
 
 CREATE TABLE object (
     id INTEGER AS ObjectId PRIMARY KEY AUTOINCREMENT,

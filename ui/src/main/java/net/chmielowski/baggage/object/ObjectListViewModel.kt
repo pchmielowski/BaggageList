@@ -1,4 +1,4 @@
-package net.chmielowski.baggage.ui
+package net.chmielowski.baggage.`object`
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,8 +17,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.chmielowski.baggage.ui.ObjectListViewModel.State.NewItemInput.Hidden
-import net.chmielowski.baggage.ui.ObjectListViewModel.State.NewItemInput.Visible
+import net.chmielowski.baggage.`object`.ObjectListViewModel.State.NewItemInput.Hidden
+import net.chmielowski.baggage.`object`.ObjectListViewModel.State.NewItemInput.Visible
+import net.chmielowski.baggage.ui.Database
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 

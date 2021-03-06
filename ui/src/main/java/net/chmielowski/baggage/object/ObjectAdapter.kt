@@ -1,4 +1,4 @@
-package net.chmielowski.baggage.ui
+package net.chmielowski.baggage.`object`
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,4 +1,4 @@
-package net.chmielowski.baggage.ui
+package net.chmielowski.baggage.`object`
 
 import com.arkivanov.mvikotlin.core.utils.isAssertOnMainThreadEnabled
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
-import net.chmielowski.baggage.ui.ObjectListViewModel.Label.ShowUndoSnackbar
+import net.chmielowski.baggage.`object`.ObjectListViewModel.Label.ShowUndoSnackbar
+import net.chmielowski.baggage.ui.Database
+import net.chmielowski.baggage.ui.createDatabase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
