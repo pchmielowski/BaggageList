@@ -1,38 +1,38 @@
 import java.lang.Boolean;
-import net.chmielowski.baggage.ui.EquipmentId;
+import net.chmielowski.baggage.ui.ObjectId;
 
-CREATE TABLE equipment (
-    id INTEGER AS EquipmentId PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE object (
+    id INTEGER AS ObjectId PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     isPacked INTEGER AS Boolean NOT NULL,
     isDeleted INTEGER AS Boolean NOT NULL
 );
 
-selectEquipments:
+selectObjects:
 SELECT id, name, isPacked
-FROM equipment
+FROM object
 WHERE isDeleted = 0
 ;
 
 insertEquimpent:
-INSERT INTO equipment (name, isPacked, isDeleted)
+INSERT INTO object (name, isPacked, isDeleted)
 VALUES (?, 0, 0)
 ;
 
-setEquipmentPacked:
-UPDATE equipment
+setObjectPacked:
+UPDATE object
 SET isPacked = ?2
 WHERE id = ?1
 ;
 
-deleteEquipment:
-UPDATE equipment
+deleteObject:
+UPDATE object
 SET isDeleted = 1
 WHERE id = ?
 ;
 
-undoDeleteEquipment:
-UPDATE equipment
+undoDeleteObject:
+UPDATE object
 SET isDeleted = 0
 WHERE id = ?
 ;

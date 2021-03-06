@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/screen_equipment_list">
+    tools:showIn="@layout/screen_object_list">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/newItemNameLayout"

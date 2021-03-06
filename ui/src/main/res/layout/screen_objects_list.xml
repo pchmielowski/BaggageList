@@ -8,7 +8,7 @@
         android:id="@+id/progress"
         layout="@layout/view_progress" />
 
-    <include layout="@layout/view_add_equipment" />
+    <include layout="@layout/view_add_object" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"

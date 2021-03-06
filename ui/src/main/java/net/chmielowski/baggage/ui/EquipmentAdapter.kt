@@ -6,12 +6,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import net.chmielowski.baggage.ui.databinding.ItemEquipmentBinding
+import net.chmielowski.baggage.ui.databinding.ItemObjectBinding
 
-class EquipmentAdapter(
-    private val onItemToggled: (EquipmentId, isChecked: Boolean) -> Unit,
-    private val onDeleteClicked: (EquipmentId) -> Unit,
-) : ListAdapter<EquipmentItem, EquipmentAdapter.ViewHolder>(Callback) {
+class ObjectAdapter(
+    private val onItemToggled: (ObjectId, isChecked: Boolean) -> Unit,
+    private val onDeleteClicked: (ObjectId) -> Unit,
+) : ListAdapter<ObjectItem, ObjectAdapter.ViewHolder>(Callback) {
 
     init {
         setHasStableIds(true)
@@ -21,7 +21,7 @@ class EquipmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            ItemEquipmentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemObjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = ViewHolder(binding)
         binding.name.setOnCheckedChangeListener { _, isChecked ->
             onItemToggled(getItem(holder.adapterPosition).id, isChecked)
@@ -41,14 +41,14 @@ class EquipmentAdapter(
         binding.delete.isVisible = item.isDeleteVisible
     }
 
-    class ViewHolder(val binding: ItemEquipmentBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: ItemObjectBinding) : RecyclerView.ViewHolder(binding.root)
 
-    private object Callback : DiffUtil.ItemCallback<EquipmentItem>() {
+    private object Callback : DiffUtil.ItemCallback<ObjectItem>() {
 
-        override fun areItemsTheSame(oldItem: EquipmentItem, newItem: EquipmentItem) =
+        override fun areItemsTheSame(oldItem: ObjectItem, newItem: ObjectItem) =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: EquipmentItem, newItem: EquipmentItem) =
+        override fun areContentsTheSame(oldItem: ObjectItem, newItem: ObjectItem) =
             oldItem == newItem
     }
 }

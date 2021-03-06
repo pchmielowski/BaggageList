@@ -17,23 +17,23 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Hidden
-import net.chmielowski.baggage.ui.EquipmentListViewModel.State.NewItemInput.Visible
+import net.chmielowski.baggage.ui.ObjectListViewModel.State.NewItemInput.Hidden
+import net.chmielowski.baggage.ui.ObjectListViewModel.State.NewItemInput.Visible
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 
-class EquipmentListViewModel(
-    private val observeEquipments: ObserveEquipments,
-    private val insertEquipment: InsertEquipment,
-    private val setEquipmentPacked: SetEquipmentPacked,
-    private val deleteEquipment: DeleteEquipment,
-    private val undoDeleteEquipment: UndoDeleteEquipment,
+class ObjectListViewModel(
+    private val observeObjects: ObserveObjects,
+    private val insertObject: InsertObject,
+    private val setObjectPacked: SetObjectPacked,
+    private val deleteObject: DeleteObject,
+    private val undoDeleteObject: UndoDeleteObject,
 ) : ViewModel() {
 
     private val storeFactory = DefaultStoreFactory
 
     private val store = storeFactory.create(
-        name = "EquipmentListStore",
+        name = "ObjectListStore",
         initialState = State(),
         executorFactory = { Executor() },
         reducer = ReducerImpl(),
@@ -53,12 +53,12 @@ class EquipmentListViewModel(
 
     fun onCancelAddingClick() = store.accept(Intent.CancelAddingNew)
 
-    fun onItemPackedToggle(id: EquipmentId, isPacked: Boolean) =
+    fun onItemPackedToggle(id: ObjectId, isPacked: Boolean) =
         store.accept(Intent.MarkPacked(id, isPacked))
 
     fun onDeleteClick() = store.accept(Intent.EnterDeletingMode)
 
-    fun onDeleteItemClick(id: EquipmentId) = store.accept(Intent.Delete(id))
+    fun onDeleteItemClick(id: ObjectId) = store.accept(Intent.Delete(id))
 
     fun onCancelDeletingClick() = store.accept(Intent.ExitDeletingMode)
 
@@ -76,11 +76,11 @@ class EquipmentListViewModel(
         object ConfirmAddingNew : Intent()
         object CancelAddingNew : Intent()
 
-        data class MarkPacked(val id: EquipmentId, val isPacked: Boolean) : Intent()
+        data class MarkPacked(val id: ObjectId, val isPacked: Boolean) : Intent()
 
         object EnterDeletingMode : Intent()
         object ExitDeletingMode : Intent()
-        data class Delete(val id: EquipmentId) : Intent()
+        data class Delete(val id: ObjectId) : Intent()
         object UndoDeleting : Intent()
     }
 
@@ -95,17 +95,17 @@ class EquipmentListViewModel(
     private data class State(
         val newItem: NewItemInput = Hidden,
         val isDeleteMode: Boolean = false,
-        val lastDeleted: EquipmentId? = null,
-        val equipmentList: List<EquipmentDto> = emptyList(),
+        val lastDeleted: ObjectId? = null,
+        val objectList: List<ObjectDto> = emptyList(),
     ) : Model {
 
         override val progress: Int
             get() {
-                val all = equipmentList.size
+                val all = objectList.size
                 if (all == 0) {
                     return 0
                 }
-                val packed = equipmentList.count { it.isPacked }.toFloat()
+                val packed = objectList.count { it.isPacked }.toFloat()
                 return (packed / all * 100).roundToInt()
             }
 
@@ -114,8 +114,8 @@ class EquipmentListViewModel(
         override val isAddNewVisible get() = newItem is Hidden
 
         override val items
-            get() = equipmentList.map {
-                EquipmentItem(
+            get() = objectList.map {
+                ObjectItem(
                     it.id,
                     it.name,
                     it.isPacked,
@@ -137,7 +137,7 @@ class EquipmentListViewModel(
         val progress: Int
         val isInputVisible: Boolean
         val isAddNewVisible: Boolean
-        val items: List<EquipmentItem>
+        val items: List<ObjectItem>
         val isCancelDeletingVisible: Boolean
         val isDeleteButtonVisible: Boolean
     }
@@ -147,9 +147,9 @@ class EquipmentListViewModel(
 
         override suspend fun executeAction(action: Unit, getState: () -> State) {
             viewModelScope.launch {
-                observeEquipments()
+                observeObjects()
                     .collectLatest { list ->
-                        updateState { copy(equipmentList = list) }
+                        updateState { copy(objectList = list) }
                     }
             }
         }
@@ -166,13 +166,13 @@ class EquipmentListViewModel(
                 }
             }
             Intent.ConfirmAddingNew -> {
-                insertEquipment((getState().newItem as Visible).text)
+                insertObject((getState().newItem as Visible).text)
                 updateState { copy(newItem = Hidden) }
             }
             Intent.CancelAddingNew -> updateState {
                 copy(newItem = Hidden)
             }
-            is Intent.MarkPacked -> setEquipmentPacked(intent.id, intent.isPacked)
+            is Intent.MarkPacked -> setObjectPacked(intent.id, intent.isPacked)
             Intent.EnterDeletingMode -> updateState {
                 copy(isDeleteMode = true)
             }
@@ -181,11 +181,11 @@ class EquipmentListViewModel(
             }
             is Intent.Delete -> {
                 updateState { copy(lastDeleted = intent.id) }
-                val lastDeletedName = getState().equipmentList.single { it.id == intent.id }.name
-                deleteEquipment(intent.id)
+                val lastDeletedName = getState().objectList.single { it.id == intent.id }.name
+                deleteObject(intent.id)
                 publish(Label.ShowUndoSnackbar(lastDeletedName))
             }
-            Intent.UndoDeleting -> undoDeleteEquipment(getState().lastDeleted!!)
+            Intent.UndoDeleting -> undoDeleteObject(getState().lastDeleted!!)
         }
 
         private fun updateState(update: State.() -> State) =
@@ -201,13 +201,13 @@ class EquipmentListViewModel(
 }
 
 // TODO: Move
-class ObserveEquipments(
+class ObserveObjects(
     private val database: Database,
     private val context: CoroutineContext = Dispatchers.IO,
 ) {
 
-    operator fun invoke() = database.equipmentQueries
-        .selectEquipments(::EquipmentDto)
+    operator fun invoke() = database.objectQueries
+        .selectObjects(::ObjectDto)
         .asFlow()
         .mapToList(context)
 }
@@ -223,29 +223,29 @@ class DatabaseExecutor(
 }
 
 // TODO: Move
-class InsertEquipment(private val executor: DatabaseExecutor) {
+class InsertObject(private val executor: DatabaseExecutor) {
 
     suspend operator fun invoke(name: String) =
-        executor.execute { equipmentQueries.insertEquimpent(name) }
+        executor.execute { objectQueries.insertEquimpent(name) }
 }
 
 // TODO: Move
-class SetEquipmentPacked(private val executor: DatabaseExecutor) {
+class SetObjectPacked(private val executor: DatabaseExecutor) {
 
-    suspend operator fun invoke(id: EquipmentId, isPacked: Boolean) =
-        executor.execute { equipmentQueries.setEquipmentPacked(id, isPacked) }
+    suspend operator fun invoke(id: ObjectId, isPacked: Boolean) =
+        executor.execute { objectQueries.setObjectPacked(id, isPacked) }
 }
 
 // TODO: Move
-class DeleteEquipment(private val executor: DatabaseExecutor) {
+class DeleteObject(private val executor: DatabaseExecutor) {
 
-    suspend operator fun invoke(id: EquipmentId) =
-        executor.execute { equipmentQueries.deleteEquipment(id) }
+    suspend operator fun invoke(id: ObjectId) =
+        executor.execute { objectQueries.deleteObject(id) }
 }
 
 // TODO: Move
-class UndoDeleteEquipment(private val executor: DatabaseExecutor) {
+class UndoDeleteObject(private val executor: DatabaseExecutor) {
 
-    suspend operator fun invoke(id: EquipmentId) =
-        executor.execute { equipmentQueries.undoDeleteEquipment(id) }
+    suspend operator fun invoke(id: ObjectId) =
+        executor.execute { objectQueries.undoDeleteObject(id) }
 }

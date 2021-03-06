@@ -4,7 +4,7 @@ import android.app.Application
 import com.squareup.sqldelight.ColumnAdapter
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
-import net.chmielowski.baggage.Equipment
+import net.chmielowski.baggage.Object_
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -26,13 +26,13 @@ class BaggageApplication : Application() {
                     }
                     factory { DatabaseExecutor(get()) }
 
-                    factory { ObserveEquipments(get()) }
-                    factory { InsertEquipment(get()) }
-                    factory { SetEquipmentPacked(get()) }
-                    factory { DeleteEquipment(get()) }
-                    factory { UndoDeleteEquipment(get()) }
+                    factory { ObserveObjects(get()) }
+                    factory { InsertObject(get()) }
+                    factory { SetObjectPacked(get()) }
+                    factory { DeleteObject(get()) }
+                    factory { UndoDeleteObject(get()) }
 
-                    viewModel { EquipmentListViewModel(get(), get(), get(), get(), get()) }
+                    viewModel { ObjectListViewModel(get(), get(), get(), get(), get()) }
                 }
             )
         }
@@ -42,8 +42,8 @@ class BaggageApplication : Application() {
 fun createDatabase(driver: SqlDriver) =
     Database(
         driver,
-        Equipment.Adapter(
-            SimpleAdapter(::EquipmentId, EquipmentId::value),
+        Object_.Adapter(
+            SimpleAdapter(::ObjectId, ObjectId::value),
         )
     )
 

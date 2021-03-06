@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
-import net.chmielowski.baggage.ui.EquipmentListViewModel.Label.ShowUndoSnackbar
+import net.chmielowski.baggage.ui.ObjectListViewModel.Label.ShowUndoSnackbar
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ private fun createTestDatabase(): Database {
 }
 
 @Suppress("ClassName")
-internal class EquipmentListViewModelTest {
+internal class ObjectListViewModelTest {
 
     private val dispatcher = TestCoroutineDispatcher()
 
@@ -35,15 +35,15 @@ internal class EquipmentListViewModelTest {
 
     private val executor = DatabaseExecutor(database, dispatcher)
 
-    private val viewModel = EquipmentListViewModel(
-        ObserveEquipments(database, dispatcher),
-        InsertEquipment(executor),
-        SetEquipmentPacked(executor),
-        DeleteEquipment(executor),
-        UndoDeleteEquipment(executor),
+    private val viewModel = ObjectListViewModel(
+        ObserveObjects(database, dispatcher),
+        InsertObject(executor),
+        SetObjectPacked(executor),
+        DeleteObject(executor),
+        UndoDeleteObject(executor),
     )
 
-    private val dummyItemId = database.equipmentQueries.selectEquipments()
+    private val dummyItemId = database.objectQueries.selectObjects()
         .executeAsList()
         .single { it.name == "Pants" }
         .id
@@ -213,4 +213,4 @@ internal class EquipmentListViewModelTest {
     private suspend fun lastLabel() = viewModel.observeLabels().first()
 }
 
-private fun Database.addDummyItem() = equipmentQueries.insertEquimpent("Pants")
+private fun Database.addDummyItem() = objectQueries.insertEquimpent("Pants")

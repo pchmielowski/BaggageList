@@ -16,16 +16,16 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
-import net.chmielowski.baggage.ui.EquipmentListViewModel.Label.ShowUndoSnackbar
-import net.chmielowski.baggage.ui.databinding.ScreenEquipmentListBinding
-import net.chmielowski.baggage.ui.databinding.ViewAddEquipmentBinding
+import net.chmielowski.baggage.ui.ObjectListViewModel.Label.ShowUndoSnackbar
+import net.chmielowski.baggage.ui.databinding.ScreenObjectsListBinding
+import net.chmielowski.baggage.ui.databinding.ViewAddObjectBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
+class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
     private val optionsMenuDelegate = OptionsMenuDelegate()
 
-    private val viewModel by viewModel<EquipmentListViewModel>()
+    private val viewModel by viewModel<ObjectListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +33,9 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val binding = ScreenEquipmentListBinding.bind(view)
-        val addNewBinding = ViewAddEquipmentBinding.bind(view)
-        val adapter = EquipmentAdapter(
+        val binding = ScreenObjectsListBinding.bind(view)
+        val addNewBinding = ViewAddObjectBinding.bind(view)
+        val adapter = ObjectAdapter(
             onItemToggled = viewModel::onItemPackedToggle,
             onDeleteClicked = viewModel::onDeleteItemClick,
         )
@@ -58,7 +58,7 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
         addNewBinding.bindListeners(viewModel)
     }
 
-    private fun ScreenEquipmentListBinding.consume(label: EquipmentListViewModel.Label) =
+    private fun ScreenObjectsListBinding.consume(label: ObjectListViewModel.Label) =
         when (label) {
             is ShowUndoSnackbar -> Snackbar
                 .make(root, getString(R.string.message_item_deleted, label.itemName), LENGTH_LONG)
@@ -68,9 +68,9 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
                 .show()
         }
 
-    private fun ScreenEquipmentListBinding.render(
-        adapter: EquipmentAdapter,
-        model: EquipmentListViewModel.Model,
+    private fun ScreenObjectsListBinding.render(
+        adapter: ObjectAdapter,
+        model: ObjectListViewModel.Model,
     ) {
         adapter.submitList(model.items)
         addNew.isVisible = model.isAddNewVisible
@@ -85,19 +85,19 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
             requireContext().getString(R.string.label_packing_progress, model.progress)
     }
 
-    private fun ViewAddEquipmentBinding.render(
-        model: EquipmentListViewModel.Model
+    private fun ViewAddObjectBinding.render(
+        model: ObjectListViewModel.Model
     ) {
         addNewInputGroup.isVisible = model.isInputVisible
     }
 
-    private fun ScreenEquipmentListBinding.bindListeners(viewModel: EquipmentListViewModel) {
+    private fun ScreenObjectsListBinding.bindListeners(viewModel: ObjectListViewModel) {
         addNew.setOnClickListener {
             viewModel.onAddItemClick()
         }
     }
 
-    private fun ViewAddEquipmentBinding.bindListeners(viewModel: EquipmentListViewModel) {
+    private fun ViewAddObjectBinding.bindListeners(viewModel: ObjectListViewModel) {
         newItemName.doOnTextChanged { text ->
             viewModel.onNewItemNameEnter(text)
         }
@@ -130,19 +130,19 @@ class EquipmentListFragment : Fragment(R.layout.screen_equipment_list) {
 
     class OptionsMenuDelegate {
 
-        private var lastModel: EquipmentListViewModel.Model? = null
+        private var lastModel: ObjectListViewModel.Model? = null
 
         private var delete: MenuItem? = null
 
         private var cancel: MenuItem? = null
 
-        fun render(model: EquipmentListViewModel.Model) {
+        fun render(model: ObjectListViewModel.Model) {
             lastModel = model
             refresh()
         }
 
         fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-            inflater.inflate(R.menu.menu_equipment, menu)
+            inflater.inflate(R.menu.menu_object, menu)
             delete = menu.findItem(R.id.menuItemDelete)
             cancel = menu.findItem(R.id.menuItemCancelDeleting)
 
