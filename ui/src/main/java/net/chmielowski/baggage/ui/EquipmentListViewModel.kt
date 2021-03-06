@@ -84,7 +84,7 @@ class EquipmentListViewModel(
     }
 
     private sealed class Result {
-        data class NewState(val state: State) : Result()
+        data class StateChange(val state: State) : Result()
         data class ListUpdate(val list: List<EquipmentDto>) : Result()
     }
 
@@ -189,14 +189,14 @@ class EquipmentListViewModel(
         }
 
         private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
-            dispatch(Result.NewState(getState().modifyState()))
+            dispatch(Result.StateChange(getState().modifyState()))
     }
 
     private class ReducerImpl : Reducer<State, Result> {
 
         override fun State.reduce(result: Result): State {
             return when (result) {
-                is Result.NewState -> result.state
+                is Result.StateChange -> result.state
                 is Result.ListUpdate -> copy(equipmentList = result.list)
             }
         }
