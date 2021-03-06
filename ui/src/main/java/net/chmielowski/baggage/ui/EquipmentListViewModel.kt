@@ -155,10 +155,10 @@ class EquipmentListViewModel(
         }
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
-            Intent.AddNew -> dispatchState(getState) {
+            Intent.AddNew -> dispatchState {
                 copy(newItem = Visible(""))
             }
-            is Intent.SetNewItemName -> dispatchState(getState) {
+            is Intent.SetNewItemName -> dispatchState {
                 if (newItem is Visible) {
                     copy(newItem = Visible(intent.name))
                 } else {
@@ -167,20 +167,20 @@ class EquipmentListViewModel(
             }
             Intent.ConfirmAddingNew -> {
                 insertEquipment((getState().newItem as Visible).text)
-                dispatchState(getState) { copy(newItem = Hidden) }
+                dispatchState { copy(newItem = Hidden) }
             }
-            Intent.CancelAddingNew -> dispatchState(getState) {
+            Intent.CancelAddingNew -> dispatchState {
                 copy(newItem = Hidden)
             }
             is Intent.MarkPacked -> setEquipmentPacked(intent.id, intent.isPacked)
-            Intent.EnterDeletingMode -> dispatchState(getState) {
+            Intent.EnterDeletingMode -> dispatchState {
                 copy(isDeleteMode = true)
             }
-            Intent.ExitDeletingMode -> dispatchState(getState) {
+            Intent.ExitDeletingMode -> dispatchState {
                 copy(isDeleteMode = false)
             }
             is Intent.Delete -> {
-                dispatchState(getState) { copy(lastDeleted = intent.id) }
+                dispatchState { copy(lastDeleted = intent.id) }
                 val lastDeletedName = getState().equipmentList.single { it.id == intent.id }.name
                 deleteEquipment(intent.id)
                 publish(Label.ShowUndoSnackbar(lastDeletedName))
@@ -188,7 +188,7 @@ class EquipmentListViewModel(
             Intent.UndoDeleting -> undoDeleteEquipment(getState().lastDeleted!!)
         }
 
-        private fun dispatchState(getState: () -> State, modifyState: State.() -> State) =
+        private fun dispatchState(modifyState: State.() -> State) =
             dispatch(Result.StateChange(modifyState))
     }
 
