@@ -85,7 +85,6 @@ class EquipmentListViewModel(
 
     private sealed class Result {
         data class StateUpdate(val update: State.() -> State) : Result()
-        data class ListUpdate(val list: List<EquipmentDto>) : Result()
     }
 
     sealed class Label {
@@ -149,7 +148,7 @@ class EquipmentListViewModel(
             viewModelScope.launch {
                 observeEquipments()
                     .collectLatest { list ->
-                        dispatch(Result.ListUpdate(list))
+                        updateState { copy(equipmentList = list) }
                     }
             }
         }
@@ -194,11 +193,8 @@ class EquipmentListViewModel(
 
     private class ReducerImpl : Reducer<State, Result> {
 
-        override fun State.reduce(result: Result): State {
-            return when (result) {
-                is Result.StateUpdate -> result.update(this)
-                is Result.ListUpdate -> copy(equipmentList = result.list)
-            }
+        override fun State.reduce(result: Result) = when (result) {
+            is Result.StateUpdate -> result.update(this)
         }
     }
 }
