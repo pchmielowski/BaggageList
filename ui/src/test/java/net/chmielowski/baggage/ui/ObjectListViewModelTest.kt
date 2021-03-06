@@ -213,4 +213,4 @@ internal class ObjectListViewModelTest {
     private suspend fun lastLabel() = viewModel.observeLabels().first()
 }
 
-private fun Database.addDummyItem() = objectQueries.insertEquimpent("Pants")
+private fun Database.addDummyItem() = objectQueries.insertObject("Pants")
