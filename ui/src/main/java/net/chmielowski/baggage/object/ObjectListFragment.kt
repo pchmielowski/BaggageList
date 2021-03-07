@@ -97,9 +97,6 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
         confirmAdding.setOnClickListener {
             viewModel.onAddingNewItemConfirm()
         }
-        cancel.setOnClickListener {
-            viewModel.onExitEditModeClick()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =

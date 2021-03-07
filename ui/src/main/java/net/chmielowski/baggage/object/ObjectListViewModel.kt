@@ -17,8 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.chmielowski.baggage.`object`.ObjectListViewModel.State.NewItemInput.Hidden
-import net.chmielowski.baggage.`object`.ObjectListViewModel.State.NewItemInput.Visible
+import net.chmielowski.baggage.`object`.ObjectListViewModel.State.Mode
 import net.chmielowski.baggage.ui.Database
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
@@ -52,14 +51,14 @@ class ObjectListViewModel(
 
     fun onAddingNewItemConfirm() = store.accept(Intent.ConfirmAddingNew)
 
-    fun onExitEditModeClick() = store.accept(Intent.CancelAddingNew)
+    fun onExitEditModeClick() = store.accept(Intent.ExitEditMode)
 
     fun onItemPackedToggle(id: ObjectId, isPacked: Boolean) =
         store.accept(Intent.MarkPacked(id, isPacked))
 
     fun onDeleteItemClick(id: ObjectId) = store.accept(Intent.Delete(id))
 
-    fun onCancelDeletingClick() = store.accept(Intent.ExitDeletingMode)
+    fun onCancelDeletingClick() = store.accept(Intent.ExitEditMode)
 
     fun onUndoDeleteClick() = store.accept(Intent.UndoDeleting)
     //endregion
@@ -73,11 +72,10 @@ class ObjectListViewModel(
         object EnterEditMode : Intent()
         data class SetNewItemName(val name: String) : Intent()
         object ConfirmAddingNew : Intent()
-        object CancelAddingNew : Intent()
 
         data class MarkPacked(val id: ObjectId, val isPacked: Boolean) : Intent()
 
-        object ExitDeletingMode : Intent()
+        object ExitEditMode : Intent()
         data class Delete(val id: ObjectId) : Intent()
         object UndoDeleting : Intent()
     }
@@ -91,9 +89,7 @@ class ObjectListViewModel(
     }
 
     private data class State(
-        // TODO: Merge
-        val newItem: NewItemInput = Hidden,
-        val isEditMode: Boolean = false,
+        val mode: Mode = Mode.Packing,
 
         val lastDeleted: ObjectId? = null,
         val objectList: List<ObjectDto> = emptyList(),
@@ -109,9 +105,7 @@ class ObjectListViewModel(
                 return (packed / all * 100).roundToInt()
             }
 
-        override val isNewObjectViewVisible get() = newItem is Visible
-
-        override val isAddNewVisible get() = newItem is Hidden
+        override val isNewObjectViewVisible get() = mode is Mode.Edit
 
         override val items
             get() = objectList.map {
@@ -119,24 +113,29 @@ class ObjectListViewModel(
                     it.id,
                     it.name,
                     it.isPacked,
-                    isEditMode,
+                    mode is Mode.Edit,
                 )
             }
 
-        override val isCancelDeletingVisible get() = isEditMode
+        // TODO: Rename
+        override val isCancelDeletingVisible get() = mode is Mode.Edit
 
-        override val isDeleteButtonVisible get() = !isEditMode
+        // TODO: Rename
+        override val isDeleteButtonVisible get() = mode is Mode.Packing
 
-        sealed class NewItemInput {
-            object Hidden : NewItemInput()
-            data class Visible(val text: String) : NewItemInput()
+        sealed class Mode {
+
+            object Packing : Mode()
+
+            data class Edit(
+                val addedObjectName: String = "",
+            ) : Mode()
         }
     }
 
     interface Model {
         val progress: Int
         val isNewObjectViewVisible: Boolean
-        val isAddNewVisible: Boolean
         val items: List<ObjectItem>
         val isCancelDeletingVisible: Boolean
         val isDeleteButtonVisible: Boolean
@@ -156,28 +155,19 @@ class ObjectListViewModel(
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
             Intent.EnterEditMode -> updateState {
-                copy(
-                    newItem = Visible(""),
-                    isEditMode = true,
-                )
+                copy(mode = Mode.Edit())
             }
             is Intent.SetNewItemName -> updateState {
-                if (newItem is Visible) {
-                    copy(newItem = Visible(intent.name))
+                if (mode is Mode.Edit) {
+                    copy(mode = mode.copy(addedObjectName = intent.name))
                 } else {
                     this
                 }
             }
-            Intent.ConfirmAddingNew -> {
-                insertObject((getState().newItem as Visible).text)
-                updateState { copy(newItem = Hidden) }
-            }
-            Intent.CancelAddingNew -> updateState {
-                copy(newItem = Hidden)
-            }
+            Intent.ConfirmAddingNew -> insertObject((getState().mode as Mode.Edit).addedObjectName)
             is Intent.MarkPacked -> setObjectPacked(intent.id, intent.isPacked)
-            Intent.ExitDeletingMode -> updateState {
-                copy(isEditMode = false)
+            Intent.ExitEditMode -> updateState {
+                copy(mode = Mode.Packing)
             }
             is Intent.Delete -> {
                 updateState { copy(lastDeleted = intent.id) }
