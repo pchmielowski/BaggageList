@@ -47,9 +47,9 @@ class ObjectListViewModel(
     //region Callbacks
     fun onEnterEditModeClick() = store.accept(Intent.EnterEditMode)
 
-    fun onNewObjectNameChange(name: String) = store.accept(Intent.SetNewItemName(name))
+    fun onNewObjectNameChange(name: String) = store.accept(Intent.SetNewObjectName(name))
 
-    fun onAddingNewItemConfirm() = store.accept(Intent.ConfirmAddingNew)
+    fun onAddingNewItemConfirm() = store.accept(Intent.ConfirmAddingObject)
 
     fun onExitEditModeClick() = store.accept(Intent.ExitEditMode)
 
@@ -67,15 +67,15 @@ class ObjectListViewModel(
 
     fun observeLabels(): Flow<Label> = labels
 
-    // TODO: Rename intents
     sealed class Intent {
         object EnterEditMode : Intent()
-        data class SetNewItemName(val name: String) : Intent()
-        object ConfirmAddingNew : Intent()
+        object ExitEditMode : Intent()
+
+        data class SetNewObjectName(val name: String) : Intent()
+        object ConfirmAddingObject : Intent()
 
         data class MarkPacked(val id: ObjectId, val isPacked: Boolean) : Intent()
 
-        object ExitEditMode : Intent()
         data class Delete(val id: ObjectId) : Intent()
         object UndoDeleting : Intent()
     }
@@ -159,14 +159,14 @@ class ObjectListViewModel(
             Intent.EnterEditMode -> updateState {
                 copy(mode = Mode.Edit())
             }
-            is Intent.SetNewItemName -> updateState {
+            is Intent.SetNewObjectName -> updateState {
                 if (mode is Mode.Edit) {
                     copy(mode = mode.copy(addedObjectName = intent.name))
                 } else {
                     this
                 }
             }
-            Intent.ConfirmAddingNew -> insertObject((getState().mode as Mode.Edit).addedObjectName)
+            Intent.ConfirmAddingObject -> insertObject((getState().mode as Mode.Edit).addedObjectName)
             is Intent.MarkPacked -> setObjectPacked(intent.id, intent.isPacked)
             Intent.ExitEditMode -> updateState {
                 copy(mode = Mode.Packing)
