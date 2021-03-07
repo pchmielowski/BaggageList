@@ -95,6 +95,8 @@ class ObjectListViewModel(
         val objectList: List<ObjectDto> = emptyList(),
     ) : Model {
 
+        override val isProgressVisible get() = mode is Mode.Packing
+
         override val progress: Int
             get() {
                 val all = objectList.size
@@ -132,7 +134,9 @@ class ObjectListViewModel(
     }
 
     interface Model {
+        val isProgressVisible: Boolean
         val progress: Int
+
         val isNewObjectViewVisible: Boolean
         val items: List<ObjectItem>
         val isEditButtonVisible: Boolean

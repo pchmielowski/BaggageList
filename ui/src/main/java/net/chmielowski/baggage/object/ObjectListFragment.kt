@@ -73,6 +73,7 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
         model: ObjectListViewModel.Model,
     ) {
         adapter.submitList(model.items)
+        progress.root.isVisible = model.isProgressVisible
         val animation = ProgressBarAnimation(
             progress.progressIndicator,
             model.progress

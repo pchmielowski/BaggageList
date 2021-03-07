@@ -6,7 +6,6 @@
     android:layout_height="match_parent">
 
     <include
-        android:visibility="gone"
         android:id="@+id/progress"
         layout="@layout/view_progress" />
 
