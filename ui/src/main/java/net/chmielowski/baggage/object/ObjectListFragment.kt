@@ -87,18 +87,18 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
     private fun ViewAddObjectBinding.render(
         model: ObjectListViewModel.Model
     ) {
-        addNewInputGroup.isVisible = model.isInputVisible
+        addNewInputGroup.isVisible = model.isNewObjectViewVisible
     }
 
     private fun ViewAddObjectBinding.bindListeners(viewModel: ObjectListViewModel) {
         newItemName.doOnTextChanged { text ->
-            viewModel.onNewItemNameEnter(text)
+            viewModel.onNewObjectNameChange(text)
         }
         confirmAdding.setOnClickListener {
             viewModel.onAddingNewItemConfirm()
         }
         cancel.setOnClickListener {
-            viewModel.onCancelAddingClick()
+            viewModel.onExitEditModeClick()
         }
     }
 

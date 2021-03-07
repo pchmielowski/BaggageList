@@ -51,30 +51,30 @@ internal class ObjectListViewModelTest {
         .id
 
     @Nested
-    inner class `on Add Item clicked` {
+    inner class `on EDIT clicked` {
 
         init {
-            viewModel.onAddItemClick()
+            viewModel.onEnterEditModeClick()
         }
 
         @Test
-        internal fun `input is displayed`() = runBlockingTest(dispatcher) {
+        internal fun `new object view is displayed`() = runBlockingTest(dispatcher) {
             assertThat(currentModel())
-                .matches { it.isInputVisible }
+                .matches { it.isNewObjectViewVisible }
         }
 
         @Nested
-        inner class `on cancelled` {
+        inner class `on CANCEL click` {
 
             init {
-                viewModel.onCancelAddingClick()
+                viewModel.onExitEditModeClick()
             }
 
             @Test
             internal fun `input is not visible`() {
                 runBlockingTest {
                     assertThat(currentModel())
-                        .matches { !it.isInputVisible }
+                        .matches { !it.isNewObjectViewVisible }
                 }
             }
         }
@@ -83,14 +83,14 @@ internal class ObjectListViewModelTest {
         inner class `on item name entered and confirmed adding` {
 
             init {
-                viewModel.onNewItemNameEnter("Socks")
+                viewModel.onNewObjectNameChange("Socks")
                 viewModel.onAddingNewItemConfirm()
             }
 
             @Test
             internal fun `input is not displayed`() = runBlockingTest {
                 assertThat(currentModel())
-                    .matches { !it.isInputVisible }
+                    .matches { !it.isNewObjectViewVisible }
             }
 
             @Test

@@ -46,13 +46,13 @@ class ObjectListViewModel(
         .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     //region Callbacks
-    fun onAddItemClick() = store.accept(Intent.AddNew)
+    fun onEnterEditModeClick() = store.accept(Intent.AddNew)
 
-    fun onNewItemNameEnter(name: String) = store.accept(Intent.SetNewItemName(name))
+    fun onNewObjectNameChange(name: String) = store.accept(Intent.SetNewItemName(name))
 
     fun onAddingNewItemConfirm() = store.accept(Intent.ConfirmAddingNew)
 
-    fun onCancelAddingClick() = store.accept(Intent.CancelAddingNew)
+    fun onExitEditModeClick() = store.accept(Intent.CancelAddingNew)
 
     fun onItemPackedToggle(id: ObjectId, isPacked: Boolean) =
         store.accept(Intent.MarkPacked(id, isPacked))
@@ -110,7 +110,7 @@ class ObjectListViewModel(
                 return (packed / all * 100).roundToInt()
             }
 
-        override val isInputVisible get() = newItem is Visible
+        override val isNewObjectViewVisible get() = newItem is Visible
 
         override val isAddNewVisible get() = newItem is Hidden
 
@@ -136,7 +136,7 @@ class ObjectListViewModel(
 
     interface Model {
         val progress: Int
-        val isInputVisible: Boolean
+        val isNewObjectViewVisible: Boolean
         val isAddNewVisible: Boolean
         val items: List<ObjectItem>
         val isCancelDeletingVisible: Boolean
