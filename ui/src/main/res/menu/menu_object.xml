@@ -3,14 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menuItemCancelDeleting"
+        android:id="@+id/exitEditMode"
         android:icon="@drawable/ic_close"
         android:title="@string/action_cancel"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menuItemDelete"
-        android:icon="@drawable/ic_delete"
-        android:title="@string/action_delete"
+        android:id="@+id/enterEditMode"
+        android:title="@string/action_edit"
         app:showAsAction="ifRoom" />
 </menu>

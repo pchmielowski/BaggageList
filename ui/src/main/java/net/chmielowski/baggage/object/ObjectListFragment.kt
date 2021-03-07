@@ -117,11 +117,11 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menuItemDelete -> {
+            R.id.enterEditMode -> {
                 viewModel.onDeleteClick()
                 true
             }
-            R.id.menuItemCancelDeleting -> {
+            R.id.exitEditMode -> {
                 viewModel.onCancelDeletingClick()
                 true
             }
@@ -133,9 +133,9 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
         private var lastModel: ObjectListViewModel.Model? = null
 
-        private var delete: MenuItem? = null
+        private var enterEditMode: MenuItem? = null
 
-        private var cancel: MenuItem? = null
+        private var exitEditMode: MenuItem? = null
 
         fun render(model: ObjectListViewModel.Model) {
             lastModel = model
@@ -144,21 +144,21 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
         fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
             inflater.inflate(R.menu.menu_object, menu)
-            delete = menu.findItem(R.id.menuItemDelete)
-            cancel = menu.findItem(R.id.menuItemCancelDeleting)
+            enterEditMode = menu.findItem(R.id.enterEditMode)
+            exitEditMode = menu.findItem(R.id.exitEditMode)
 
             refresh()
         }
 
         private fun refresh() {
             val model = lastModel ?: return
-            delete?.isVisible = model.isDeleteButtonVisible
-            cancel?.isVisible = model.isCancelDeletingVisible
+            enterEditMode?.isVisible = model.isDeleteButtonVisible
+            exitEditMode?.isVisible = model.isCancelDeletingVisible
         }
 
         fun onDestroyOptionsMenu() {
-            delete = null
-            cancel = null
+            enterEditMode = null
+            exitEditMode = null
         }
     }
 }

@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:background="?selectableItemBackgroundBorderless"
-        android:contentDescription="@string/action_delete"
+        android:contentDescription="@string/action_edit"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
         app:srcCompat="@drawable/ic_delete" />
