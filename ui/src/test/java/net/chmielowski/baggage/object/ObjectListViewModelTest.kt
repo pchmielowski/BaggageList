@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
+import net.chmielowski.baggage.`object`.ObjectListViewModel.Intent
 import net.chmielowski.baggage.`object`.ObjectListViewModel.Label.ShowUndoSnackbar
 import net.chmielowski.baggage.ui.Database
 import net.chmielowski.baggage.ui.createDatabase
@@ -54,7 +55,7 @@ internal class ObjectListViewModelTest {
     inner class `on EDIT clicked` {
 
         init {
-            viewModel.onEnterEditModeClick()
+            viewModel.accept(Intent.EnterEditMode)
         }
 
         @Test
@@ -67,7 +68,7 @@ internal class ObjectListViewModelTest {
         inner class `on CANCEL click` {
 
             init {
-                viewModel.onExitEditModeClick()
+                viewModel.accept(Intent.ExitEditMode)
             }
 
             @Test
@@ -84,8 +85,8 @@ internal class ObjectListViewModelTest {
 
             init {
                 // TODO: Count
-                viewModel.onNewObjectNameChange("Socks")
-                viewModel.onAddingNewItemConfirm()
+                viewModel.accept(Intent.SetNewObjectName("Socks"))
+                viewModel.accept(Intent.ConfirmAddingObject)
             }
 
             @Test
@@ -101,7 +102,7 @@ internal class ObjectListViewModelTest {
     inner class `on dummy item checked as packed` {
 
         init {
-            viewModel.onItemPackedToggle(dummyItemId, isPacked = true)
+            viewModel.accept(Intent.MarkPacked(dummyItemId, isPacked = true))
         }
 
         @Test
@@ -120,7 +121,7 @@ internal class ObjectListViewModelTest {
         inner class `on checked as not packed` {
 
             init {
-                viewModel.onItemPackedToggle(dummyItemId, isPacked = false)
+                viewModel.accept(Intent.MarkPacked(dummyItemId, isPacked = false))
             }
 
             @Test
@@ -136,7 +137,7 @@ internal class ObjectListViewModelTest {
     inner class `on Delete icon clicked` {
 
         init {
-            viewModel.onEnterEditModeClick()
+            viewModel.accept(Intent.EnterEditMode)
         }
 
         @Test
@@ -155,7 +156,7 @@ internal class ObjectListViewModelTest {
         inner class `on delete item clicked` {
 
             init {
-                viewModel.onDeleteItemClick(dummyItemId)
+                viewModel.accept(Intent.Delete(dummyItemId))
             }
 
             @Test
@@ -174,7 +175,7 @@ internal class ObjectListViewModelTest {
             inner class `on Undo click` {
 
                 init {
-                    viewModel.onUndoDeleteClick()
+                    viewModel.accept(Intent.UndoDeleting)
                 }
 
                 @Test
@@ -189,7 +190,7 @@ internal class ObjectListViewModelTest {
         inner class `on Cancel icon clicked` {
 
             init {
-                viewModel.onCancelDeletingClick()
+                viewModel.accept(Intent.ExitEditMode)
             }
 
             @Test

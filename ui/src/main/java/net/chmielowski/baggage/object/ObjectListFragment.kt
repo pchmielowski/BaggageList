@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
+import net.chmielowski.baggage.`object`.ObjectListViewModel.Intent
 import net.chmielowski.baggage.`object`.ObjectListViewModel.Label.ShowUndoSnackbar
 import net.chmielowski.baggage.ui.R
 import net.chmielowski.baggage.ui.databinding.ScreenObjectsListBinding
@@ -37,8 +38,8 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
         val binding = ScreenObjectsListBinding.bind(view)
         val addNewBinding = ViewAddObjectBinding.bind(view)
         val adapter = ObjectAdapter(
-            onItemToggled = viewModel::onItemPackedToggle,
-            onDeleteClicked = viewModel::onDeleteItemClick,
+            onItemToggled = { id, isPacked -> viewModel.accept(Intent.MarkPacked(id, isPacked)) },
+            onDeleteClicked = { id -> viewModel.accept(Intent.Delete(id)) },
         )
         binding.list.adapter = adapter
 
@@ -63,7 +64,7 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
             is ShowUndoSnackbar -> Snackbar
                 .make(root, getString(R.string.message_item_deleted, label.itemName), LENGTH_LONG)
                 .setAction(R.string.action_undo) {
-                    viewModel.onUndoDeleteClick()
+                    viewModel.accept(Intent.UndoDeleting)
                 }
                 .show()
         }
@@ -93,10 +94,10 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
     private fun ViewAddObjectBinding.bindListeners(viewModel: ObjectListViewModel) {
         newItemName.doOnTextChanged { text ->
-            viewModel.onNewObjectNameChange(text)
+            viewModel.accept(Intent.SetNewObjectName(text))
         }
         confirmAdding.setOnClickListener {
-            viewModel.onAddingNewItemConfirm()
+            viewModel.accept(Intent.ConfirmAddingObject)
         }
     }
 
@@ -108,11 +109,11 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.enterEditMode -> {
-                viewModel.onEnterEditModeClick()
+                viewModel.accept(Intent.EnterEditMode)
                 true
             }
             R.id.exitEditMode -> {
-                viewModel.onCancelDeletingClick()
+                viewModel.accept(Intent.ExitEditMode)
                 true
             }
             else -> false

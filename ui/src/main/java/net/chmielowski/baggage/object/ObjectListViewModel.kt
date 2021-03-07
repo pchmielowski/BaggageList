@@ -44,24 +44,7 @@ class ObjectListViewModel(
     private val labels = store.labels
         .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-    //region Callbacks
-    fun onEnterEditModeClick() = store.accept(Intent.EnterEditMode)
-
-    fun onNewObjectNameChange(name: String) = store.accept(Intent.SetNewObjectName(name))
-
-    fun onAddingNewItemConfirm() = store.accept(Intent.ConfirmAddingObject)
-
-    fun onExitEditModeClick() = store.accept(Intent.ExitEditMode)
-
-    fun onItemPackedToggle(id: ObjectId, isPacked: Boolean) =
-        store.accept(Intent.MarkPacked(id, isPacked))
-
-    fun onDeleteItemClick(id: ObjectId) = store.accept(Intent.Delete(id))
-
-    fun onCancelDeletingClick() = store.accept(Intent.ExitEditMode)
-
-    fun onUndoDeleteClick() = store.accept(Intent.UndoDeleting)
-    //endregion
+    fun accept(intent: Intent) = store.accept(intent)
 
     fun observeModel(): Flow<Model> = store.states
 
