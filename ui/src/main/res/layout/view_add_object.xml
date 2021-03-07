@@ -18,7 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="6"
-            android:hint="@string/label_count" />
+            android:hint="@string/label_count"
+            android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
