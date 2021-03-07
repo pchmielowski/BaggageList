@@ -55,7 +55,6 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
             }
         }
 
-        binding.bindListeners(viewModel)
         addNewBinding.bindListeners(viewModel)
     }
 
@@ -74,7 +73,6 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
         model: ObjectListViewModel.Model,
     ) {
         adapter.submitList(model.items)
-        addNew.isVisible = model.isAddNewVisible
         val animation = ProgressBarAnimation(
             progress.progressIndicator,
             model.progress
@@ -90,12 +88,6 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
         model: ObjectListViewModel.Model
     ) {
         addNewInputGroup.isVisible = model.isInputVisible
-    }
-
-    private fun ScreenObjectsListBinding.bindListeners(viewModel: ObjectListViewModel) {
-        addNew.setOnClickListener {
-            viewModel.onAddItemClick()
-        }
     }
 
     private fun ViewAddObjectBinding.bindListeners(viewModel: ObjectListViewModel) {
