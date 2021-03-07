@@ -6,7 +6,7 @@
     <string name="label_packing_progress">Packing progress: %d%%</string>
 
     <string name="action_add_new_item">Add new item</string>
-    <string name="action_confirm">Confirm</string>
+    <string name="action_add">Add</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_undo">Undo</string>
     <string name="action_edit">Edit</string>
