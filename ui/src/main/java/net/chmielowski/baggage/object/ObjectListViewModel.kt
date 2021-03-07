@@ -46,7 +46,7 @@ class ObjectListViewModel(
         .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     //region Callbacks
-    fun onEnterEditModeClick() = store.accept(Intent.AddNew)
+    fun onEnterEditModeClick() = store.accept(Intent.EnterEditMode)
 
     fun onNewObjectNameChange(name: String) = store.accept(Intent.SetNewItemName(name))
 
@@ -56,8 +56,6 @@ class ObjectListViewModel(
 
     fun onItemPackedToggle(id: ObjectId, isPacked: Boolean) =
         store.accept(Intent.MarkPacked(id, isPacked))
-
-    fun onDeleteClick() = store.accept(Intent.EnterDeletingMode)
 
     fun onDeleteItemClick(id: ObjectId) = store.accept(Intent.Delete(id))
 
@@ -72,14 +70,13 @@ class ObjectListViewModel(
 
     // TODO: Rename intents
     sealed class Intent {
-        object AddNew : Intent()
+        object EnterEditMode : Intent()
         data class SetNewItemName(val name: String) : Intent()
         object ConfirmAddingNew : Intent()
         object CancelAddingNew : Intent()
 
         data class MarkPacked(val id: ObjectId, val isPacked: Boolean) : Intent()
 
-        object EnterDeletingMode : Intent()
         object ExitDeletingMode : Intent()
         data class Delete(val id: ObjectId) : Intent()
         object UndoDeleting : Intent()
@@ -94,8 +91,10 @@ class ObjectListViewModel(
     }
 
     private data class State(
+        // TODO: Merge
         val newItem: NewItemInput = Hidden,
-        val isDeleteMode: Boolean = false,
+        val isEditMode: Boolean = false,
+
         val lastDeleted: ObjectId? = null,
         val objectList: List<ObjectDto> = emptyList(),
     ) : Model {
@@ -120,13 +119,13 @@ class ObjectListViewModel(
                     it.id,
                     it.name,
                     it.isPacked,
-                    isDeleteMode,
+                    isEditMode,
                 )
             }
 
-        override val isCancelDeletingVisible get() = isDeleteMode
+        override val isCancelDeletingVisible get() = isEditMode
 
-        override val isDeleteButtonVisible get() = !isDeleteMode
+        override val isDeleteButtonVisible get() = !isEditMode
 
         sealed class NewItemInput {
             object Hidden : NewItemInput()
@@ -156,8 +155,11 @@ class ObjectListViewModel(
         }
 
         override suspend fun executeIntent(intent: Intent, getState: () -> State) = when (intent) {
-            Intent.AddNew -> updateState {
-                copy(newItem = Visible(""))
+            Intent.EnterEditMode -> updateState {
+                copy(
+                    newItem = Visible(""),
+                    isEditMode = true,
+                )
             }
             is Intent.SetNewItemName -> updateState {
                 if (newItem is Visible) {
@@ -174,11 +176,8 @@ class ObjectListViewModel(
                 copy(newItem = Hidden)
             }
             is Intent.MarkPacked -> setObjectPacked(intent.id, intent.isPacked)
-            Intent.EnterDeletingMode -> updateState {
-                copy(isDeleteMode = true)
-            }
             Intent.ExitDeletingMode -> updateState {
-                copy(isDeleteMode = false)
+                copy(isEditMode = false)
             }
             is Intent.Delete -> {
                 updateState { copy(lastDeleted = intent.id) }

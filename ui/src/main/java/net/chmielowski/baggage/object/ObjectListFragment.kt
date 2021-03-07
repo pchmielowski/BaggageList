@@ -110,7 +110,7 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.enterEditMode -> {
-                viewModel.onDeleteClick()
+                viewModel.onEnterEditModeClick()
                 true
             }
             R.id.exitEditMode -> {

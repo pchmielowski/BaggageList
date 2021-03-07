@@ -131,11 +131,12 @@ internal class ObjectListViewModelTest {
         }
     }
 
+    // TODO: Merge with EDIT click
     @Nested
     inner class `on Delete icon clicked` {
 
         init {
-            viewModel.onDeleteClick()
+            viewModel.onEnterEditModeClick()
         }
 
         @Test
