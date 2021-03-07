@@ -83,6 +83,7 @@ internal class ObjectListViewModelTest {
         inner class `on item name entered and confirmed adding` {
 
             init {
+                // TODO: Count
                 viewModel.onNewObjectNameChange("Socks")
                 viewModel.onAddingNewItemConfirm()
             }
