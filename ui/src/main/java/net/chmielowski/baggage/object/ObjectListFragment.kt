@@ -141,8 +141,8 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
         private fun refresh() {
             val model = lastModel ?: return
-            enterEditMode?.isVisible = model.isDeleteButtonVisible
-            exitEditMode?.isVisible = model.isCancelDeletingVisible
+            enterEditMode?.isVisible = model.isEditButtonVisible
+            exitEditMode?.isVisible = model.isCancelButtonVisible
         }
 
         fun onDestroyOptionsMenu() {

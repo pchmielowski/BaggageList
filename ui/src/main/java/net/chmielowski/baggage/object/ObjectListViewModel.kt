@@ -117,11 +117,9 @@ class ObjectListViewModel(
                 )
             }
 
-        // TODO: Rename
-        override val isCancelDeletingVisible get() = mode is Mode.Edit
+        override val isEditButtonVisible get() = mode is Mode.Packing
 
-        // TODO: Rename
-        override val isDeleteButtonVisible get() = mode is Mode.Packing
+        override val isCancelButtonVisible get() = mode is Mode.Edit
 
         sealed class Mode {
 
@@ -137,8 +135,8 @@ class ObjectListViewModel(
         val progress: Int
         val isNewObjectViewVisible: Boolean
         val items: List<ObjectItem>
-        val isCancelDeletingVisible: Boolean
-        val isDeleteButtonVisible: Boolean
+        val isEditButtonVisible: Boolean
+        val isCancelButtonVisible: Boolean
     }
 
     private inner class Executor :

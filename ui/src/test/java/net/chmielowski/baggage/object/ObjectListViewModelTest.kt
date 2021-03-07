@@ -148,7 +148,7 @@ internal class ObjectListViewModelTest {
         @Test
         internal fun `cancel deleting button is visible`() = runBlockingTest {
             assertThat(currentModel())
-                .matches { it.isCancelDeletingVisible }
+                .matches { it.isCancelButtonVisible }
         }
 
         @Nested
@@ -201,7 +201,7 @@ internal class ObjectListViewModelTest {
             @Test
             internal fun `delete button is visible`() = runBlockingTest {
                 assertThat(currentModel())
-                    .matches { it.isDeleteButtonVisible }
+                    .matches { it.isEditButtonVisible }
             }
         }
     }
