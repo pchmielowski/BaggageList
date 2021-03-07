@@ -2,6 +2,7 @@
     <string name="app_name">Baggage</string>
 
     <string name="label_new_item_name">New item name</string>
+    <string name="label_count">Count</string>
     <string name="label_packing_progress">Packing progress: %d%%</string>
 
     <string name="action_add_new_item">Add new item</string>
