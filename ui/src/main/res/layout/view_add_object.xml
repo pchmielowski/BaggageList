@@ -40,7 +40,8 @@
             android:id="@+id/newItemName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/label_new_item_name" />
+            android:hint="@string/label_new_item_name"
+            tools:text="Pants" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
