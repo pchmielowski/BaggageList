@@ -9,7 +9,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    tools:showIn="@layout/screen_object_list">
+    tools:showIn="@layout/screen_objects_list">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,15 +20,15 @@
             android:id="@+id/progressIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="23" />
+            tools:progress="70" />
 
         <TextView
             android:id="@+id/progressMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            tools:text="Packing progress: 70%" />
 
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
-    
