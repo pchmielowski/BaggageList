@@ -58,7 +58,7 @@ internal class ObjectListViewModelTest {
         }
 
         @Test
-        internal fun `new object view is displayed`() = runBlockingTest(dispatcher) {
+        internal fun `new object view is visible`() = runBlockingTest(dispatcher) {
             assertThat(currentModel())
                 .matches { it.isNewObjectViewVisible }
         }
@@ -71,7 +71,7 @@ internal class ObjectListViewModelTest {
             }
 
             @Test
-            internal fun `input is not visible`() {
+            internal fun `new object view is not visible`() {
                 runBlockingTest {
                     assertThat(currentModel())
                         .matches { !it.isNewObjectViewVisible }
@@ -86,12 +86,6 @@ internal class ObjectListViewModelTest {
                 // TODO: Count
                 viewModel.onNewObjectNameChange("Socks")
                 viewModel.onAddingNewItemConfirm()
-            }
-
-            @Test
-            internal fun `input is not displayed`() = runBlockingTest {
-                assertThat(currentModel())
-                    .matches { !it.isNewObjectViewVisible }
             }
 
             @Test
