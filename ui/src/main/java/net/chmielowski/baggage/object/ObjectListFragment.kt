@@ -61,13 +61,15 @@ class ObjectListFragment : Fragment(R.layout.screen_objects_list) {
 
     private fun ScreenObjectsListBinding.consume(label: ObjectListViewModel.Label) =
         when (label) {
-            is ShowUndoSnackbar -> Snackbar
-                .make(root, getString(R.string.message_item_deleted, label.itemName), LENGTH_LONG)
-                .setAction(R.string.action_undo) {
-                    viewModel.accept(Intent.UndoDeleting)
-                }
-                .show()
+            is ShowUndoSnackbar -> showUndoSnackbar(label.objectName)
         }
+
+    private fun ScreenObjectsListBinding.showUndoSnackbar(objectName: String) = Snackbar
+        .make(root, getString(R.string.message_item_deleted, objectName), LENGTH_LONG)
+        .setAction(R.string.action_undo) {
+            viewModel.accept(Intent.UndoDeleting)
+        }
+        .show()
 
     private fun ScreenObjectsListBinding.render(
         adapter: ObjectAdapter,

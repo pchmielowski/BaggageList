@@ -68,7 +68,7 @@ class ObjectListViewModel(
     }
 
     sealed class Label {
-        data class ShowUndoSnackbar(val itemName: String) : Label()
+        data class ShowUndoSnackbar(val objectName: String) : Label()
     }
 
     private data class State(
